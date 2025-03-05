@@ -19,6 +19,9 @@
             background-color: #ffffff;
         }
         .background{
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 95%;
             height: 90%;
             min-height: 400px;
@@ -26,8 +29,26 @@
             min-width: 300px;
             max-width: 1800px;
             padding: 20px;
-            background-color: mistyrose;
+            background-color: #dcdcdc;
             text-align: center;
+            border-radius: 20px;
+        }
+        .loginwindow{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 350px;
+            height: 300px;
+            background-color: lightblue;
+            border-radius: 20px;
+        }
+
+        .loginbtn:hover{
+            cursor: pointer;
+        }
+        .sunimg{
+            width: 150px;
         }
     </style>
 </head>
@@ -36,8 +57,9 @@
 <div class="frame">
     <div class="background">
         <div class="loginwindow">
-            <span>로그인하기</span>
-            <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>
+            <img src="../img/moon.png" class="sunimg"><br>
+            <img src="../img/kakao_login_medium_narrow.png" class="loginbtn" onclick="loginWithKakao()">
+<%--            <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>--%>
         </div>
     </div>
 </div>

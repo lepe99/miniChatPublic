@@ -23,18 +23,35 @@
             display: flex;
             flex-direction: column; /* 상단(top)과 나머지 부분을 세로 정렬 */
             height: 100vh;
-            padding: 20px;
+            padding: 30px;
         }
 
         /* 상단 박스 */
         .top {
             display: flex;
-            height: 60px;
-            margin-bottom: 20px;
-            background-color: mistyrose;
-            justify-content: flex-end; /* 내부 요소를 오른쪽 정렬 */
+            height: 50px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            background-color: #dcdcdc;
             align-items: center; /* 수직 가운데 정렬 */
+            position: relative;
         }
+
+        .account {
+            position: absolute;
+            right: 2%;
+            cursor: pointer;
+        }
+
+        .menu{
+            display: none;
+            cursor: pointer;
+            top: 50px;
+            background-color: yellow;
+            width: 100px;
+            height: 100px;
+        }
+
 
         /* 아래 영역을 가로 배치 */
         .chat {
@@ -46,21 +63,27 @@
         .left {
             width: 15%; /* 전체 화면의 15% 차지 */
             min-width: 200px; /* 최소 너비 */
-            background-color: #3e71a5;
+            background-color: #dcdcdc;
             color: white;
+            border-radius: 20px;
             align-items: center;
             padding: 20px;
             display: flex;
             flex-direction: column; /* 내부 요소를 세로 정렬 */
-            margin-right: 20px;
+            margin-right: 15px;
         }
 
         /* 오른쪽 채팅 영역 */
         .right {
             flex: 1; /* 남은 공간을 모두 차지 */
-            background-color: yellow;
+            background-color: #dcdcdc;
             display: flex;
             flex-direction: column;
+            border-radius: 15px;
+        }
+
+        .logout {
+
         }
     </style>
     <script>
@@ -69,6 +92,22 @@
             if (!isLogin) {
                 location.href = '/login';
             }
+
+            const account = document.getElementById("accountbtn");
+            const menu = document.getElementById("dropdownMenu");
+
+            account.addEventListener("click", function (e) {
+                menu.style.display = menu.style.display === "block" ? "none" : "block";
+                e.stopPropagation(); // 클릭 이벤트 전파 방지
+            });
+
+            document.addEventListener("click", function () {
+                menu.style.display = "none"; // 다른 곳 클릭 시 닫기
+            });
+
+            menu.addEventListener("click", function (e) {
+                e.stopPropagation(); // 메뉴 내부 클릭 시 닫히지 않도록 방지
+            });
         });
     </script>
 </head>
@@ -76,18 +115,22 @@
 <div class="frame">
     <div class="top">
         <span>채팅창</span>
-        <img src="${sessionScope.profileImage}" class="sphoto">${sessionScope.nickname}
-        <button class="logout" onclick="location.href='logout'">로그아웃</button>
+        <div class="account" id="accountbtn">
+            <img src="${sessionScope.profileImage}" class="sphoto">${sessionScope.nickname}
+            <div id="dropdownMenu" class="menu">
+                <button class="logout" onclick="location.href='logout'">로그아웃</button>
+            </div>
+        </div>
     </div>
-<div class="chat">
-    <div class="left">
-        ff
-    </div>
+    <div class="chat">
+        <div class="left">
+            ff
+        </div>
 
-    <div class="right">
-        ff
+        <div class="right">
+            ff
+        </div>
     </div>
-</div>
 </div>
 </body>
 </html>
