@@ -58,7 +58,11 @@ public class LoginController {
     public String logout(HttpSession session) {
         // 세션 초기화
         session.invalidate();
-        return "redirect:/"; // 메인 페이지로 리다이렉트
+        return "redirect:/login"; // 메인 페이지로 리다이렉트
     }
-    
+
+    @GetMapping("/login")
+    public String login(){
+        return "login";
+    }
 }
