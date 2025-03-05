@@ -13,12 +13,21 @@
     <style>
         .frame{
             display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
         }
         .background{
-            justify-content: center;
-            background-color: #756363;
-            width: 1000px;
-            height: 900px;
+            width: 95%;
+            height: 90%;
+            min-height: 400px;
+            max-height: 1080px;
+            min-width: 300px;
+            max-width: 1800px;
+            padding: 20px;
+            background-color: mistyrose;
+            text-align: center;
         }
     </style>
 </head>
@@ -29,10 +38,6 @@
         <div class="loginwindow">
             <span>로그인하기</span>
             <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>
-        </div>
-        <div>
-<%--            <span>${sessionScope.nickname}</span>--%>
-<%--            <span><img src="${sessionScope.profileImage}"</span>--%>
         </div>
     </div>
 </div>
