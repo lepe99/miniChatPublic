@@ -186,7 +186,7 @@
                 <span>\${text}</span>
             </div>
             `;
-            $("#chatBox").prepend(messageHtml);
+            $("#chatBox").append(messageHtml);
             $("#chatBox").scrollTop($("#chatBox")[0].scrollHeight); // 스크롤 아래로 자동 이동
         }
     </script>
