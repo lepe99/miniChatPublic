@@ -68,7 +68,7 @@
                         console.error("status: " + xhr.status);
                         console.error("error: " + error);
                     }
-                })
+                });
                 // 입력창 초기화
                 $("#messageInput").val("");
             });

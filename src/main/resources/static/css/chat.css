@@ -14,6 +14,12 @@ body * {
     border-radius: 15px;
 }
 
+.chatProfileImage {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+
 
 /* 왼쪽 유저 목록 */
 #userList {
@@ -68,7 +74,7 @@ body * {
 #main {
     display: flex;
     flex: 1; /* 남은 공간을 모두 차지 */
-
+    overflow: hidden;
 }
 
 /* 오른쪽 채팅 영역 */
@@ -76,6 +82,7 @@ body * {
     flex: 1; /* 남은 공간을 모두 차지 */
     display: flex;
     flex-direction: column;
+    min-width: 0;
 
 }
 
@@ -86,7 +93,8 @@ body * {
     border-radius: 20px;
     padding: 10px;
     margin-bottom: 5px;
-    min-height: 300px; /* 최소 높이 설정 */
+    min-height: 200px; /* 최소 높이 설정 */
+    max-height: 770px;
     overflow-y: auto; /* 스크롤 가능하도록 */
     background: linear-gradient(135deg, #ffffff, #d5d8f6);
 }
@@ -137,6 +145,12 @@ body * {
     max-width: 60%;
     display: inline-block;
     margin-bottom: 8px;
+}
+.date{
+    text-align: center;
+    color: #9b9eb6;
+    font-size: 14px;
+    margin: 5px 0;
 }
 
 .infoMessage {
