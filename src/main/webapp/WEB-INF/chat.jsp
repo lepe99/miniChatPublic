@@ -18,17 +18,23 @@
         body * {
             font-family: Jua;
         }
-
-        .sphoto {
+        .topphoto{
             width: 40px;
             height: 40px;
             border-radius: 20px;
         }
 
-        .profile {
+        .sphoto {
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+        }
+
+        .profiles {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             gap: 8px;
         }
 
@@ -117,35 +123,25 @@
             color: white;
             cursor: pointer;
         }
-
-        .chatmsg {
-            display: block !important;
-            align-items: center;
-            color: black;
-            margin: 5px 0;
-        }
-
-        .mymsg {
+        .mymessage {
             justify-content: flex-end;
-            background-color: #dcf8c6;
+            background-color: #dddddd;
             padding: 10px;
             border-radius: 10px;
         }
 
-        .othermsg {
+        .othermessage {
             justify-content: flex-start;
             background-color: #f1f0f0;
             padding: 10px;
             border-radius: 10px;
         }
 
-        .msgbubble {
-            min-height: 20px; /* 최소 높이를 설정하여 보이도록 함 */
-            height: 30px;
-            display: inline-block; /* 혹시 모를 flex 문제 방지 */
-            padding: 10px; /* 내부 패딩 추가 */
-            background-color: lightgray; /* 메시지 확인용 배경색 */
-            border-radius: 10px;
+        .infomessage{
+            text-align: center;
+            color: lightgrey;
+            font-size: 14px;
+            margin: 5px 0;
         }
 
         .timestamp {
@@ -221,11 +217,11 @@
                 if (message.type === "enter") {
                     // 입장 메세지 처리
                     let userInfo = message.userInfo;
-                    console.log(userInfo.nickname + "님이 입장하셨습니다.");
+                    displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
                 } else if (message.type === "leave") {
                     // 퇴장 메세지 처리
                     let userInfo = message.userInfo;
-                    console.log(userInfo.nickname + "님이 퇴장하셨습니다.");
+                    displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
                 } else if (message.type === "userList") {
                     // 유저 리스트 처리
                     displayUserList(message.userList);
@@ -235,17 +231,12 @@
                 }
             };
 
-            // 전송 버튼 클릭 시
-            $("#btnSend").click(() => {
-
-            });
-
         });
 
         // 유저 리스트 출력
         function displayUserList(userList) {
             let userListHtml = "";
-            $("#left").empty(); // 기존 유저 리스트 삭제
+            $(".profiles").empty(); // 기존 유저 리스트 삭제
             userList.forEach((user) => {
                 userListHtml += `
                 <div class="profile">
@@ -253,14 +244,14 @@
                     <span class="nickname">\${user.nickname}</span>
                 </div>
                 `;
-                console.log(userListHtml);
+                // console.log(userListHtml);
             });
-            $(".left").html(userListHtml);
+            $(".profiles").html(userListHtml);
         }
 
         // 메세지 출력
         function displayMessage(message) {
-            console.log("메세지 출력");
+            // console.log("메세지 출력");
             let timestamp = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 
             let messageHtml = "";
@@ -294,6 +285,17 @@
             // 스크롤 아래로 이동
             $("#chatBox").scrollTop($("#chatBox").prop("scrollHeight"));
         }
+
+        //입퇴장 메세지 출력
+        function displaySystemMessage (text){
+            let messageHtml =`
+            <div class="infomessage">
+                <span>\${text}</span>
+            </div>
+            `;
+            $("#chatBox").append(messageHtml);
+            $("#chatBox").scrollTop($("#chatBox")[0].scrollHeight); // 스크롤 아래로 자동 이동
+        }
     </script>
 </head>
 <body>
@@ -302,13 +304,13 @@
         <span>채팅창</span>
         <a href="#" title="Header" data-bs-toggle="popover" data-bs-placement="bottom"
            class="popoverbtn">
-            <img src="${sessionScope.profileImage}" class="sphoto">&nbsp;${sessionScope.nickname}님, 안녕하세요!
+            <img src="${sessionScope.profileImage}" class="topphoto">&nbsp;${sessionScope.nickname}님, 안녕하세요!
         </a>
     </div>
     <div class="chat">
         <div class="left">
-            <div class="input-group profile">
-                <img src="${sessionScope.profileImage}" class="sphoto">&nbsp;${sessionScope.nickname}
+            <div class="input-group profiles">
+
             </div>
             <br>
         </div>
