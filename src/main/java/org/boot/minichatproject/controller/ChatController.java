@@ -1,6 +1,5 @@
 package org.boot.minichatproject.controller;
 
-import jakarta.websocket.Session;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.dto.ChatDto;
 import org.boot.minichatproject.service.ChatService;
