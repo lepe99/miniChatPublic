@@ -289,10 +289,10 @@
             }
 
             // console.log("추가할 HTML:", messageHtml); // ✅ HTML 코드 확인
-            chatBox.append(messageHtml);
+            $("#chatBox").append(messageHtml);
             // console.log("현재 chatBox 내용:", chatBox.html()); // ✅ chatBox에 추가되었는지 확인
             // 스크롤 아래로 이동
-            chatBox.scrollTop = chatBox.scrollHeight;
+            $("#chatBox").scrollTop($("#chatBox").prop("scrollHeight"));
         }
     </script>
 </head>
