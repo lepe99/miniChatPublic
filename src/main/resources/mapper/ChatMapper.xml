@@ -4,7 +4,7 @@
 
     <select id="selectChatList" resultType="ChatDto">
         select * from chat
-        order by idx desc
+        order by idx asc
         limit 100
     </select>
 
