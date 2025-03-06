@@ -225,7 +225,7 @@
             </div>
             <!-- 채팅 입력창 -->
             <div id="chatInput">
-                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
+                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..." required/>
                 <button id="sendBtn">전송</button>
             </div>
         </div>
