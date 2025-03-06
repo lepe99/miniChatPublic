@@ -24,7 +24,7 @@
                 location.href = '/login';
             }
 
-            //popover a태그 기본방지
+            // popover a태그 기본방지
             document.querySelectorAll('#popoverBtn').forEach(function (el) {
                 el.addEventListener("click", function (e) {
                     e.preventDefault();
@@ -36,7 +36,7 @@
                 new bootstrap.Popover(el, {
                     html: true,
                     container: 'body', //popover가 body에 추가될수있게
-                    sanitize: false,    //html정상렌더링
+                    sanitize: false,    //html 정상렌더링
                     content: "<button class='btn btn-danger btn-sm' onclick='location.href=\"/logout\"'>로그아웃</button>"
                 });
             });
@@ -128,30 +128,46 @@
             $("#userList").html(userListHtml);
         }
 
+
+        // 마지막 표시 날짜 추적 위한 전역변수 선언
+        let lastDisplayedDate = null;
         // 메세지 출력
-        function displayMessage(message) {
+        function displayMessage(message, timestamp = new Date()) {
             // console.log("메세지 출력");
-            let timestamp = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            let date = timestamp.toLocaleDateString();
+            let time = timestamp.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            console.log("time:", time);
+            console.log("date:", date);
 
             let messageHtml = "";
+
+            if (lastDisplayedDate !== date) {
+                // 날짜가 바뀌면 날짜 표시
+                messageHtml = `
+                    <div class="date">
+                        <span>\${date}</span>
+                    </div>
+                    `;
+                lastDisplayedDate = date; // 마지막 표시 날짜 갱신
+            }
             if (message.nickname === "${sessionScope.nickname}") {
                 //내 메세지(오른쪽 하단 정렬, 프로필 닉네임 표시안하고 타임스탬프 왼쪽)
-                messageHtml = `
+                messageHtml += `
                     <div class="myMessage">
-                        <span class="timestamp">\${timestamp}</span>
+                        <span class="timestamp">\${time}</span>
                         <div class="myContents">\${message.content}</div>
                     </div>
                     `;
             } else {
                 //상대방메세지 (왼쪽 하단 정렬, 프로필+닉네임 표시 , 타임스탬프 오른쪽)
-                messageHtml = `
+                messageHtml += `
                     <div class="otherMessage">
                         <div class="otherChatProfile">
                             <img src="\${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">\${message.nickname}</span>
                         </div>
                         <div class="otherContents">\${message.content}</div>
-                        <span class="timestamp">\${timestamp}</span>
+                        <span class="timestamp">\${time}</span>
                     </div>
                     `;
             }
@@ -170,7 +186,7 @@
                 <span>\${text}</span>
             </div>
             `;
-            $("#chatBox").append(messageHtml);
+            $("#chatBox").prepend(messageHtml);
             $("#chatBox").scrollTop($("#chatBox")[0].scrollHeight); // 스크롤 아래로 자동 이동
         }
     </script>
@@ -191,7 +207,20 @@
         <div id="chat">
             <!-- 채팅 메세지가 표시되는 영역 -->
             <div id="chatBox">
+                <c:forEach var="chat" items="${chatList}">
+                    <script>
+                        // java 객체 => javaScript 객체로 변환
+                        message = {
+                            nickname: "${chat.nickname}",
+                            profileImage: "${chat.profileImage}",
+                            content: "${chat.message}"
+                        };
+                        timestamp = new Date(${chat.createdAt.time});
 
+                        // 메세지 출력
+                        displayMessage(message, timestamp);
+                    </script>
+                </c:forEach>
 
             </div>
             <!-- 채팅 입력창 -->
