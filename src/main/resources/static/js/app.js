@@ -45,7 +45,18 @@ $(function () {
 
 // 유저 리스트 출력
 function displayUserList(userList) {
-    console.log("유저 리스트 출력");
+    let userListHtml = "";
+    $("#left").empty(); // 기존 유저 리스트 삭제
+    userList.forEach((user) => {
+        userListHtml += `
+                <div class="profile">
+                    <img src="${user.profileImage}" class="profileImage">
+                    <span class="nickname">${user.nickname}</span>
+                </div>
+        `;
+        $("#left").append(userListHtml);
+    });
+
 }
 
 // 메세지 출력
