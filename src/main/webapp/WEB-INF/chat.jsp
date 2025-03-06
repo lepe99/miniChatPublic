@@ -44,6 +44,16 @@
 
             //버튼 클릭시 메세지 전송
             $("#sendBtn").click(function () {
+                // messageInput 이 비어있으면 전송하지 않음
+                if ($("#messageInput").val().trim() === "") {
+                    // Toast 보여주기
+                    var toastEl = document.getElementById('liveToast');
+                    var toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+
+                    return;
+                }
+
                 let message = {
                     nickname: "${sessionScope.nickname}",
                     profileImage: "${sessionScope.profileImage}",
@@ -136,8 +146,6 @@
             // console.log("메세지 출력");
             let date = timestamp.toLocaleDateString();
             let time = timestamp.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            console.log("time:", time);
-            console.log("date:", date);
 
             let messageHtml = "";
 
@@ -189,6 +197,8 @@
             $("#chatBox").append(messageHtml);
             $("#chatBox").scrollTop($("#chatBox")[0].scrollHeight); // 스크롤 아래로 자동 이동
         }
+
+
     </script>
 </head>
 <body>
@@ -225,8 +235,21 @@
             </div>
             <!-- 채팅 입력창 -->
             <div id="chatInput">
-                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..." required/>
+                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
                 <button id="sendBtn">전송</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- bs5 toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+            <div class="toast-header">
+                <strong class="me-auto">알림</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                채팅을 입력해주세요.
             </div>
         </div>
     </div>
