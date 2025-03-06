@@ -7,6 +7,7 @@ import org.boot.minichatproject.service.LoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,9 +61,10 @@ public class LoginController {
         session.invalidate();
         return "redirect:/login"; // 메인 페이지로 리다이렉트
     }
-
+    
     @GetMapping("/login")
-    public String login(){
+    public String login(Model model) {
+        model.addAttribute("kakaoJavascriptKey", loginService.getKakaoJavascriptKey());
         return "login";
     }
 }

@@ -3,6 +3,7 @@ package org.boot.minichatproject.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.dto.KakaoUserInfo;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +15,13 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class LoginService {
     
+    @Getter
     @Value("${kakao.restapi.key}")
     private String kakaoRestApiKey;
+    
+    @Getter
+    @Value("${kakao.javascript.key}")
+    private String kakaoJavascriptKey;
     
     
     private final RestTemplate restTemplate = new RestTemplate();

@@ -70,7 +70,7 @@
 
 <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
 <script>
-    Kakao.init('1449c4fc9eb007b995d91b343053da4a'); // Kakao Developers에서 발급받은 JavaScript 키
+    Kakao.init('${kakaoJavascriptKey}'); // Kakao Developers에서 발급받은 JavaScript 키
 
     function loginWithKakao() {
         Kakao.Auth.login({
