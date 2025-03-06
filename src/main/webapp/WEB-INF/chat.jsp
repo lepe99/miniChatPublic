@@ -187,11 +187,15 @@
 
             //버튼 클릭시 메세지 전송
             sendButton.click(function () {
-                let message = messageInput.val().trim();
-                if (message !== "") {
-                    sendMessage(true, "", "", message); //내 메세지 추가
-                    messageInput.val(""); //입력창 초기화
-                }
+                let message = {
+                    nickname: "${sessionScope.nickname}",
+                    profileImage: "${sessionScope.profileImage}",
+                    content: $("#messageInput").val()
+                };
+                // 메세지 전송
+                socket.send(JSON.stringify(message));
+                // 입력창 초기화
+                $("#messageInput").val("");
             });
 
             //엔터 키 입력시 메세지 전송
@@ -233,56 +237,10 @@
 
             // 전송 버튼 클릭 시
             $("#btnSend").click(() => {
-                let message = {
-                    nickname: "${sessionScope.nickname}",
-                    profileImage: "${sessionScope.profileImage}",
-                    content: $("#inputMessage").val()
-                };
-                // 메세지 전송
-                socket.send(JSON.stringify(message));
-                // 입력창 초기화
-                $("#inputMessage").val("");
+
             });
 
         });
-
-        //메세지 전송 함수
-        function sendMessage(isMine, profileImage, nickname, message) {
-            // console.log("sendMessage 호출됨"); // ✅ 함수가 실행되는지 확인
-            // console.log("메시지 내용:", message);
-
-            let timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-            // console.log("📩 timestamp 값:", timestamp);
-
-            let messageHtml;
-            if (isMine) {
-                //내메세지 (오른쪽정렬, 타임스탬프가 왼쪽에 표시)
-                messageHtml = `
-                    <div class="chatmsg mymsg">
-                        <span class="timestamp">\${timestamp}</span>
-                        <div class="msgbubble">\${message}</div>
-                    </div>
-                    `;
-            } else {
-                //상대방메세지 (왼쪽정렬, 프로필+닉네임 표시 , 타임스탬프 오른쪽)
-                messageHtml = `
-                    <div class="chatmsg othermsg">
-                        <div class="prifilecontainer">
-                            <img src="\${profileImage}" class="profileImg">
-                            <span class="nickname">\${nickname}</span>
-                        </div>
-                        <div class="msgcontainer">
-                            <div class="msgbubble">\${message}</div>
-                            <span class="timestamp">\${timestamp}</span>
-                        </div>
-                    </div>
-                    `;
-            }
-            // console.log("추가할 HTML:", messageHtml); // ✅ HTML 코드 확인
-            chatBox.append(messageHtml);
-            // console.log("현재 chatBox 내용:", chatBox.html()); // ✅ chatBox에 추가되었는지 확인
-            chatBox.scrollTop(chatBox.prop("scrollHeight")); // 스크롤 아래로 이동
-        }
 
         // 유저 리스트 출력
         function displayUserList(userList) {
@@ -303,6 +261,38 @@
         // 메세지 출력
         function displayMessage(message) {
             console.log("메세지 출력");
+            let timestamp = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+            let messageHtml = "";
+            if (message.nickname === "${sessionScope.nickname}") {
+                //내 메세지(오른쪽 하단 정렬, 프로필 닉네임 표시안하고 타임스탬프 왼쪽)
+                messageHtml = `
+                    <div class="mymessage">
+                        <span class="timestamp">\${timestamp}</span>
+                        <div class="messagecontent">\${message.content}</div>
+                    </div>
+                    `;
+            } else {
+                //상대방메세지 (왼쪽 하단 정렬, 프로필+닉네임 표시 , 타임스탬프 오른쪽)
+                messageHtml = `
+                    <div class="othermessage">
+                        <div class="prifilecontainer">
+                            <img src="\${message.profileImage}" class="profileImg">
+                            <span class="nickname">\${message.nickname}</span>
+                        </div>
+                        <div class="messagecontainer">
+                            <div class="messagecontent">\${message.content}</div>
+                            <span class="timestamp">\${timestamp}</span>
+                        </div>
+                    </div>
+                    `;
+            }
+
+            // console.log("추가할 HTML:", messageHtml); // ✅ HTML 코드 확인
+            chatBox.append(messageHtml);
+            // console.log("현재 chatBox 내용:", chatBox.html()); // ✅ chatBox에 추가되었는지 확인
+            // 스크롤 아래로 이동
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </head>
