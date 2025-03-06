@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="css/chat.css">
+
     <script>
+
         $(function () {
 
             // 로그인 여부 확인
@@ -59,9 +61,9 @@
                     data: {content: $("#messageInput").val()},
                     success: (response) => {
                         if (response === "success") {
-                            console.log("메세지 저장 성공");
+                            // console.log("메세지 저장 성공");
                         } else {
-                            console.log("메세지 저장 실패");
+                            // console.log("메세지 저장 실패");
                         }
                     },
                     error : (xhr, status, error) => {
@@ -136,8 +138,8 @@
             // console.log("메세지 출력");
             let date = timestamp.toLocaleDateString();
             let time = timestamp.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-            console.log("time:", time);
-            console.log("date:", date);
+            // console.log("time:", time);
+            // console.log("date:", date);
 
             let messageHtml = "";
 
@@ -194,8 +196,8 @@
 <body>
 <div id="chatContainer">
     <div id="header">
-        <span>채팅창</span>
-        <a href="#" title="Header" data-bs-toggle="popover" data-bs-placement="bottom"
+        <span>bitcamp 501</span>
+        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
            id="popoverBtn">
             <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
         </a>
@@ -225,6 +227,7 @@
             </div>
             <!-- 채팅 입력창 -->
             <div id="chatInput">
+                <button id="imageInput">+</button>
                 <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
                 <button id="sendBtn">전송</button>
             </div>
