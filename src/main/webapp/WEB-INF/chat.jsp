@@ -13,10 +13,23 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        body * {
+            font-family: Jua;
+        }
+
         .sphoto {
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .frame {
@@ -37,21 +50,14 @@
             position: relative;
         }
 
-        .account {
-            position: absolute;
-            right: 2%;
+        .popoverbtn {
+            display: flex;
+            margin-left: auto;
+            align-items: center;
             cursor: pointer;
+            text-decoration: none;
+            color: black;
         }
-
-        .menu{
-            display: none;
-            cursor: pointer;
-            top: 50px;
-            background-color: yellow;
-            width: 100px;
-            height: 100px;
-        }
-
 
         /* 아래 영역을 가로 배치 */
         .chat {
@@ -79,11 +85,73 @@
             background-color: #dcdcdc;
             display: flex;
             flex-direction: column;
-            border-radius: 15px;
         }
 
-        .logout {
+        .chatbox {
+            flex: 1;
+            flex-direction: column-reverse;
+            padding: 10px;
+            display: flex;
+            min-height: 300px; /* 최소 높이 설정 */
+            overflow-y: auto; /* 스크롤 가능하도록 */
+            background-color: white; /* 배경색 설정 */
+        }
 
+        .chatinput {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .chatinput input {
+            flex: 1;
+            padding: 5px;
+            border: none;
+            outline: none;
+        }
+
+        .chatinput button {
+            padding: 5px 10px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .chatmsg {
+            display: block !important;
+            align-items: center;
+            color: black;
+            margin: 5px 0;
+        }
+
+        .mymsg {
+            justify-content: flex-end;
+            background-color: #dcf8c6;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .othermsg {
+            justify-content: flex-start;
+            background-color: #f1f0f0;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .msgbubble {
+            min-height: 20px; /* 최소 높이를 설정하여 보이도록 함 */
+            height: 30px;
+            display: inline-block; /* 혹시 모를 flex 문제 방지 */
+            padding: 10px; /* 내부 패딩 추가 */
+            background-color: lightgray; /* 메시지 확인용 배경색 */
+            border-radius: 10px;
+        }
+
+        .timestamp {
+            display: inline-block !important; /* 강제로 보이게 설정 */
+            font-size: 12px;
+            color: gray;
         }
     </style>
     <script>
@@ -92,21 +160,79 @@
             if (!isLogin) {
                 location.href = '/login';
             }
-
-            const account = document.getElementById("accountbtn");
-            const menu = document.getElementById("dropdownMenu");
-
-            account.addEventListener("click", function (e) {
-                menu.style.display = menu.style.display === "block" ? "none" : "block";
-                e.stopPropagation(); // 클릭 이벤트 전파 방지
+            //popover a태그 기본방지
+            document.querySelectorAll('.popoverbtn').forEach(function (el) {
+                el.addEventListener("click", function (e) {
+                    e.preventDefault();
+                });
             });
 
-            document.addEventListener("click", function () {
-                menu.style.display = "none"; // 다른 곳 클릭 시 닫기
+            //button popover
+            document.querySelectorAll('.popoverbtn').forEach(function (el) {
+                new bootstrap.Popover(el, {
+                    html: true,
+                    container: 'body', //popover가 body에 추가될수있게
+                    sanitize: false,    //html정상렌더링
+                    content: "<button class='btn btn-danger btn-sm' onclick='location.href=\"/logout\"'>로그아웃</button>"
+                });
             });
 
-            menu.addEventListener("click", function (e) {
-                e.stopPropagation(); // 메뉴 내부 클릭 시 닫히지 않도록 방지
+            //채팅기능
+            const chatBox = $("#chatBox");
+            const messageInput = $("#messageInput");
+            const sendButton = $("#sendButton");
+
+            //메세지 전송 함수
+            function sendMessage(isMine, profileImage, nickname, message) {
+                // console.log("sendMessage 호출됨"); // ✅ 함수가 실행되는지 확인
+                // console.log("메시지 내용:", message);
+
+                let timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                // console.log("📩 timestamp 값:", timestamp);
+
+                let messageHtml;
+                if (isMine) {
+                    //내메세지 (오른쪽정렬, 타임스탬프가 왼쪽에 표시)
+                    messageHtml = `
+                    <div class="chatmsg mymsg">
+                        <span class="timestamp">\${timestamp}</span>
+                        <div class="msgbubble">\${message}</div>
+                    </div>
+                    `;
+                } else {
+                    //상대방메세지 (왼쪽정렬, 프로필+닉네임 표시 , 타임스탬프 오른쪽)
+                    messageHtml = `
+                    <div class="chatmsg othermsg">
+                        <div class="prifilecontainer">
+                            <img src="\${profileImage}" class="profileImg">
+                            <span class="nickname">\${nickname}</span>
+                        </div>
+                        <div class="msgcontainer">
+                            <div class="msgbubble">\${message}</div>
+                            <span class="timestamp">\${timestamp}</span>
+                        </div>
+                    </div>
+                    `;
+                }
+                // console.log("추가할 HTML:", messageHtml); // ✅ HTML 코드 확인
+                chatBox.append(messageHtml);
+                // console.log("현재 chatBox 내용:", chatBox.html()); // ✅ chatBox에 추가되었는지 확인
+                chatBox.scrollTop(chatBox.prop("scrollHeight")); // 스크롤 아래로 이동
+            }
+
+            //버튼 클릭시 메세지 전송
+            sendButton.click(function () {
+                let message = messageInput.val().trim();
+                if (message !== "") {
+                    sendMessage(true, "", "", message); //내 메세지 추가
+                    messageInput.val(""); //입력창 초기화
+                }
+            });
+            //엔터 키 입력시 메세지 전송
+            messageInput.keypress(function (event) {
+                if (event.which === 13) {    //Enter 아스키
+                    sendButton.click();
+                }
             });
         });
     </script>
@@ -115,20 +241,28 @@
 <div class="frame">
     <div class="top">
         <span>채팅창</span>
-        <div class="account" id="accountbtn">
-            <img src="${sessionScope.profileImage}" class="sphoto">${sessionScope.nickname}
-            <div id="dropdownMenu" class="menu">
-                <button class="logout" onclick="location.href='logout'">로그아웃</button>
-            </div>
-        </div>
+        <a href="#" title="Header" data-bs-toggle="popover" data-bs-placement="bottom"
+           class="popoverbtn">
+            <img src="${sessionScope.profileImage}" class="sphoto">&nbsp;${sessionScope.nickname}님, 안녕하세요!
+        </a>
     </div>
     <div class="chat">
         <div class="left">
-            ff
+            <div class="input-group profile">
+                <img src="${sessionScope.profileImage}" class="sphoto">&nbsp;${sessionScope.nickname}
+            </div>
+            <br>
         </div>
-
         <div class="right">
-            ff
+            <!-- 채팅 메세지가 표시되는 영역 -->
+            <div class="chatbox" id="chatBox">
+
+            </div>
+            <!-- 채팅 입력창 -->
+            <div class="chatinput">
+                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
+                <button id="sendButton">전송</button>
+            </div>
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
     <style>
         body * {
             font-family: Jua;
@@ -59,7 +60,8 @@
 <div class="frame">
     <div class="background">
         <div class="loginwindow">
-            <img src="../img/moon.png" class="sunimg"><br><span>bitcamp 501에 참여하고 싶다면 로그인을 해주세요!</span><br>
+            <img src="../img/moon.png" class="sunimg"><br>
+            <span>bitcamp 501에 참여하고 싶다면 로그인을 해주세요!</span><br>
             <img src="../img/kakao_login_medium_narrow.png" class="loginbtn" onclick="loginWithKakao()">
 <%--            <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>--%>
         </div>
