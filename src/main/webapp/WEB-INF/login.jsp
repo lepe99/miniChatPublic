@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #ffffff;
+            background: linear-gradient(135deg, #0a1e13, #28392e); /* 배경 그라디언트 */
         }
         .background{
             display: flex;
@@ -32,7 +32,10 @@
             max-height: 1080px;
             min-width: 300px;
             max-width: 1800px;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* 배경 그라디언트 */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url("../img/back.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             text-align: center;
             border-radius: 20px;
         }
@@ -42,9 +45,12 @@
             align-items: center;
             justify-content: center;
             width: 350px;
-            height: 300px;
-            background: linear-gradient(135deg, #9aecff, #ecfdfd); /* 배경 그라디언트 */
+            height: 320px;
+            background: linear-gradient(135deg, rgba(81, 163, 126, 0.8), rgba(214, 255, 191, 0.5)); /* 투명도 적용 */
             border-radius: 20px;
+            backdrop-filter: blur(5px); /* 배경 흐림 효과 */
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5); /* 그림자 추가 */
+            color: white;
         }
 
         .loginbtn:hover{
@@ -61,7 +67,7 @@
     <div class="background">
         <div class="loginwindow">
             <img src="../img/moon.png" class="sunimg"><br>
-            <span>bitcamp 501에 참여하고 싶다면 로그인을 해주세요!</span><br>
+            <span style="font-size: 1.3em">로그인 해주세요</span><br>
             <img src="../img/kakao_login_medium_narrow.png" class="loginbtn" onclick="loginWithKakao()">
 <%--            <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>--%>
         </div>
