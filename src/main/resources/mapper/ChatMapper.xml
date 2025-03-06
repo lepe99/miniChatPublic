@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.boot.minichatproject.dto.ChatDto">
+<mapper namespace="org.boot.minichatproject.mapper.ChatMapper">
+
+    <select id="selectChatList" resultType="ChatDto">
+        select * from chat
+        order by idx desc
+        limit 100
+    </select>
+
+    <insert id="insertChat" parameterType="ChatDto">
+        insert into chat (nickname, profileImage, message)
+        values (#{nickname}, #{profileImage}, #{message})
+    </insert>
+
+    <select id="selectChatCount" resultType="int">
+        select count(*) from chat
+    </select>
+    
+    <delete id="deleteFirstChat">
+        delete from chat
+        order by idx asc
+        limit 1
+    </delete>
+
 
 </mapper>

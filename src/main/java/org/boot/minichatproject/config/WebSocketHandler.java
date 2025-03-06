@@ -36,7 +36,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 String[] queryParams = query.split("&");
                 Map<String, String> params = new HashMap<>();
                 for (String param : queryParams) {
-                    String[] keyValue = param.split("=");
+                    String[] keyValue = param.split("=", 2);
                     params.put(keyValue[0], keyValue[1]);
                 }
 
