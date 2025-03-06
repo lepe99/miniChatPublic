@@ -211,7 +211,7 @@
             const nickname = encodeURIComponent("${sessionScope.nickname}");
             const profileImage = encodeURIComponent("${sessionScope.profileImage}");
             // 웹소켓 연결, url에 세션 정보 포함하기
-            let socket = new WebSocket("ws://localhost:8085/chat?nickname=" + nickname + "&profileImage=" + profileImage);
+            let socket = new WebSocket("ws://223.130.135.96:8090/chat?nickname=" + nickname + "&profileImage=" + profileImage);
 
             // 웹소켓으로부터 메세지 수신
             socket.onmessage = (event) => {
