@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/style.css">
     <script>
         // jsp 관련 전역 변수로 선언 (window 객체에 추가)
         window.objectStorageUrl = "${objectStorageUrl}";
@@ -30,7 +31,7 @@
     <script src="js/chat.js"></script>
 </head>
 <body>
-<div id="chatContainer">
+<div id="chatContainer" class="frame">
     <div id="header">
         <span>채팅창</span>
         <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"

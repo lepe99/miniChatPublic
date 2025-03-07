@@ -235,7 +235,7 @@ function displayMessage(message, timestamp = new Date()) {
         if (message.chatImage === "") {
             messageHtml += `
                     <div class="myMessage">
-                        <span class="timestamp">${time}</span>
+                        <span class="timestamp myTimestamp">${time}</span>
                         <div class="myContents">
                             ${message.content}
                         </div>
@@ -244,7 +244,7 @@ function displayMessage(message, timestamp = new Date()) {
         } else {
             messageHtml += `
                     <div class="myMessage">
-                        <span class="timestamp">${time}</span>
+                        <span class="timestamp myTimestamp">${time}</span>
                         <div class="myContents">
                             <img src="${imageOptimizerFrontUrl}/images/${message.chatImage}${imageOptimizerBackUrl}"
                             class="chatImage" alt="${message.chatImage}"><br>
@@ -265,7 +265,7 @@ function displayMessage(message, timestamp = new Date()) {
                         <div class="otherContents">
                             ${message.content}
                         </div>
-                        <span class="timestamp">${time}</span>
+                        <span class="timestamp otherTimestamp">${time}</span>
                     </div>
                     `;
         } else {
@@ -280,7 +280,7 @@ function displayMessage(message, timestamp = new Date()) {
                             class="chatImage" alt="${message.chatImage}"><br>
                             ${message.content}
                         </div>
-                        <span class="timestamp">${time}</span>
+                        <span class="timestamp otherTimestamp">${time}</span>
                     </div>
                     `;
         }
