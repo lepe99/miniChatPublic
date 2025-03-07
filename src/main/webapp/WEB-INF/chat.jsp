@@ -33,7 +33,7 @@
 <div id="chatContainer">
     <div id="header">
         <span>채팅창</span>
-        <a href="#" title="Header" data-bs-toggle="popover" data-bs-placement="bottom"
+        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
            id="popoverBtn">
             <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
         </a>

@@ -104,8 +104,6 @@ $(function () {
         let messageInput = $("#messageInput");
         let imageInput = $("#imageInput");
 
-        // 세션이 만료되었을 경우 로그인 페이지 리다이렉트
-        if (!isLogin) location.href = '/login';
 
         // messageInput 이 비어있으면 전송하지 않음
         if (messageInput.val().trim() === "" && imageInput.val().trim() === "") {
