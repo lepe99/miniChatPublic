@@ -13,4 +13,5 @@ public class ChatDto {
     private String message;
     private String profileImage;
     private Timestamp createdAt;
+    private String chatImage;
 }
