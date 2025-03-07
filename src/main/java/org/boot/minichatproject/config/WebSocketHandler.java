@@ -37,7 +37,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
     private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
-    private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
+    private static final long IDLE_TIMEOUT_MS = 20000; // 60초 동안 메시지 없으면 연결 종료
     
     // 메세지 큐 사용위한 큐
     private final BlockingQueue<TextMessage> messageQueue = new LinkedBlockingQueue<>();
@@ -187,6 +187,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             sendMessageToAll(objectMapper.writeValueAsString(message));
         }
         
+        // 유저 리스트 전송
+        sendUserList();
+        
         // HTTP 세션 가져오기 및 무효화
         HttpSession httpSession = (HttpSession) session.getAttributes()
                 .get(HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME);
@@ -199,9 +202,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 System.err.println("HttpSession 이미 무효화됨: " + httpSession.getId());
             }
         }
-        
-        // 유저 리스트 전송
-        sendUserList();
     }
     
     // 메시지 생성
