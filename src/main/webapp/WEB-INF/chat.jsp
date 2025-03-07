@@ -28,11 +28,6 @@
 
         $(function () {
 
-            // 채팅 사진 undefined 일시 숨기기
-            $(".chatImage").each((i, e) => {
-
-            });
-
             let imagePopover = null;
 
             // + 버튼 선택시 파일선택
