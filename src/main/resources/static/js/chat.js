@@ -82,6 +82,9 @@ $(function () {
         if (imagePopover && !$(event.target).closest("#imageInputBtn, .popover").length) {
             imagePopover.dispose();
             imagePopover = null;
+
+            // 파일 선택 초기화
+            $("#imageInput").val("");
         }
     });
 
