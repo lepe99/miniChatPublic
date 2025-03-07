@@ -117,6 +117,12 @@ $(function () {
 
         // formdata 가져오기
         let formData = new FormData($("#chatInput")[0]);
+
+        // 입력창 초기화
+        messageInput.val("");
+        imageInput.val("");
+
+
         // db에 저장
         $.ajax({
             url: "insert",
@@ -124,12 +130,8 @@ $(function () {
             data: formData,
             contentType: false,
             processData: false,
-            beforeSend: () => {
-                $("#chatInput").prop("disabled", true); // 전송 중에는 입력창 비활성화
-            },
             success: (response) => {
                 console.log("메세지 저장 성공");
-                $("#chatInput").prop("disabled", false); // 폼 활성화
 
                 // 메세지 객체 생성
                 let message = {
@@ -140,10 +142,6 @@ $(function () {
                 };
                 // 웹소켓 메세지 전송
                 socket.send(JSON.stringify(message));
-
-                // 입력창 초기화
-                messageInput.val("");
-                $("#imageInput").val("");
 
             },
             error: (xhr, status, error) => {
