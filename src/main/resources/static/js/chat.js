@@ -203,10 +203,6 @@ $(function () {
         resetPingTimeout();
     }
 
-    socket.onclose = () => { // 연결 종료 시 타이머 제거
-        clearTimeout(pingTimeout);
-    }
-
     // ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
     function resetPingTimeout() {
         clearTimeout(pingTimeout);
