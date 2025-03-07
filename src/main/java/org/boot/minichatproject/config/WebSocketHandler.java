@@ -3,7 +3,6 @@ package org.boot.minichatproject.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.util.Utils;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,6 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.io.IOException;
 import java.net.URI;
@@ -37,7 +35,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
     private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
-    private static final long IDLE_TIMEOUT_MS = 20000; // 60초 동안 메시지 없으면 연결 종료
+    private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
     
     // 메세지 큐 사용위한 큐
     private final BlockingQueue<TextMessage> messageQueue = new LinkedBlockingQueue<>();
