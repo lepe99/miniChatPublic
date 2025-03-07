@@ -195,22 +195,34 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
     
     // idle 세션 체크
-    private synchronized void checkIdleSessions() {
+    private void checkIdleSessions() {
         long now = Instant.now().toEpochMilli();
-        for (WebSocketSession session : sessions) {
-            Long lastTime = lastMessageTime.get(session);
-            if (lastTime == null) {
-                continue;
-            }
-            if (now - lastTime > IDLE_TIMEOUT_MS) {
-                try {
-                    if (session.isOpen()) {
-                        session.close(CloseStatus.SESSION_NOT_RELIABLE);
-                        System.out.println("Idle 타임아웃으로 인한 웹소켓 연결 종료: " + session.getId());
-                    }
-                } catch (IOException e) {
-                    System.err.println("세션 종료 중 오류 발생: " + e.getMessage());
+        // 닫을 세션 목록
+        List<WebSocketSession> sessionToClose = new ArrayList<>();
+        
+        // sessions를 돌면서 idle 체크, 그동안 동기화하여 보호
+        synchronized (this) {
+            for (WebSocketSession session : sessions) {
+                Long lastTime = lastMessageTime.get(session);
+                if (lastTime == null) {
+                    continue;
                 }
+                if (now - lastTime > IDLE_TIMEOUT_MS) {
+                    // 닫을 세션 목록에 추가
+                    sessionToClose.add(session);
+                }
+            }
+        } // 동기화 블록 끝, sessions에 대한 접근 종료
+        
+        // 닫을 세션들에 대해 close 호출
+        for (WebSocketSession session : sessionToClose) {
+            try {
+                if (session.isOpen()) {
+                    session.close(CloseStatus.SESSION_NOT_RELIABLE);
+                    System.out.println("Idle 타임아웃으로 인한 웹소켓 연결 종료: " + session.getId());
+                }
+            } catch (IOException e) {
+                System.err.println("세션 종료 중 오류 발생: " + e.getMessage());
             }
         }
     }
