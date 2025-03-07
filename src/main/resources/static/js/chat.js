@@ -173,7 +173,6 @@ $(function () {
         // ping 메세지 응답
         if (event.data === "ping") {
             socket.send("pong");
-            console.log("pong");
             return;
         }
         // 수신된 메세지를 JSON으로 파싱

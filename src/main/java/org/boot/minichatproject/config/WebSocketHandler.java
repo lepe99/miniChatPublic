@@ -128,7 +128,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     synchronized (session) { // 세션 동기화
                         if (session.isOpen()) { // 다시 한번 확인
                             session.sendMessage(new TextMessage("ping")); // ping 메세지 전송
-                            System.out.println("ping");
                         }
                     }
                 }
@@ -220,7 +219,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // sessions를 돌면서 idle 체크
         for (WebSocketSession session : sessions) {
             Long lastTime = lastMessageTime.get(session);
-            System.out.println(now - lastTime);
+            System.out.println(now - lastTime - IDLE_TIMEOUT_MS);
             
             if (lastTime == null) {
                 continue;
