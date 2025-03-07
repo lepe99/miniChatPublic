@@ -3,32 +3,32 @@ $(function () {
     let imagePopover = null;
 
     // + 버튼 선택시 파일선택
-    $("#imageInputBtn").click(function (){
+    $("#imageInputBtn").click(function () {
         $("#imageInput").click();
     });
 
     //파일 선택시 이미지 미리보기 생성 (popover)
-    $("#imageInput").change(function (event){
-        let file= event.target.files[0];
+    $("#imageInput").change(function (event) {
+        let file = event.target.files[0];
 
-        if(file){
+        if (file) {
             let reader = new FileReader();
-            reader.onload = function (e){
+            reader.onload = function (e) {
                 let imageInputHtml = `
                         <img src="${e.target.result}" id="popoverImage">`;
                 //기존 Popover 제거(중복방지)
-                if(imagePopover){
+                if (imagePopover) {
                     imagePopover.dispose();
-                    imagePopover=null;
+                    imagePopover = null;
                 }
 
                 //popover 생성 및 내용 업데이트
-                $("#imageInputBtn").attr("data-bs-content",imageInputHtml);
+                $("#imageInputBtn").attr("data-bs-content", imageInputHtml);
                 //새로초기화
-                imagePopover = new bootstrap.Popover($("#imageInputBtn")[0],{
-                    html:true,
-                    trigger:"manual",
-                    placement:"top"
+                imagePopover = new bootstrap.Popover($("#imageInputBtn")[0], {
+                    html: true,
+                    trigger: "manual",
+                    placement: "top"
                 });
                 imagePopover.show(); //popover 표시
             };
@@ -46,28 +46,28 @@ $(function () {
     });
 
     //이미지 클릭시 챗모달 띄우기
-    $("#chatBox").on("click", ".chatImage", function (e){
+    $("#chatBox").on("click", ".chatImage", function (e) {
         let imageAlt = $(e.target).attr("alt");
         let imageUrl = `${objectStorageUrl}/images/${imageAlt}`;
-        $("#modalImage").attr("src",imageUrl);
+        $("#modalImage").attr("src", imageUrl);
 
         let modal = $("#chatModal");
         modal.css("display", "flex"); // 모달 표시
 
         //애니메이션 적용
-        requestAnimationFrame(()=>{
+        requestAnimationFrame(() => {
             modal.addClass("show");
         });
     });
 
     //외부 클릭시 모달 닫기
-    $("#chatModal").on("click",function (e){
-        if (!$(e.target).closest("#modalImage").length){
+    $("#chatModal").on("click", function (e) {
+        if (!$(e.target).closest("#modalImage").length) {
             let modal = $("#chatModal");
             modal.removeClass("show");
             setTimeout(() => {
                 modal.hide();
-            },300);
+            }, 300);
         }
     });
 
@@ -142,9 +142,15 @@ $(function () {
                 $("#imageInput").val("");
 
             },
-            error : (xhr, status, error) => {
-                alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
-                location.href = '/login';
+            error: (xhr, status, error) => {
+                if (xhr.status === 401) {
+                    alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
+                    location.href = '/login';
+                } else if (xhr.status === 413) { // 파일 크기 초과
+                    alert("파일 크기는 10MB를 넘을 수 없습니다.");
+                } else {
+                    alert("오류 발생. 상태 코드 : " + xhr.status + ", 오류 메시지 : " + xhr.responseText);
+                }
             }
         });
 
@@ -218,11 +224,12 @@ function displayUserList(userList) {
 
 // 마지막 표시 날짜 추적 위한 전역변수 선언
 let lastDisplayedDate = null;
+
 // 메세지 출력
 function displayMessage(message, timestamp = new Date()) {
     // console.log("메세지 출력");
     let date = timestamp.toLocaleDateString();
-    let time = timestamp.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    let time = timestamp.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
     let messageHtml = "";
 
@@ -299,8 +306,8 @@ function displayMessage(message, timestamp = new Date()) {
 }
 
 //입퇴장 메세지 출력
-function displaySystemMessage (text){
-    let messageHtml =`
+function displaySystemMessage(text) {
+    let messageHtml = `
             <div class="infoMessage">
                 <span>${text}</span>
             </div>

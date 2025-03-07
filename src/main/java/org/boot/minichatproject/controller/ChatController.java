@@ -6,6 +6,7 @@ import org.boot.minichatproject.dto.ChatDto;
 import org.boot.minichatproject.service.ChatService;
 import org.boot.minichatproject.service.NcpObjectStorageService;
 import org.boot.minichatproject.util.Utils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,10 @@ public class ChatController {
     
     // 버킷 이름
     private final String bucketName = "minichat-image";
+    
+    
+    @Value("${spring.servlet.multipart.max-file-size}")
+    private String maxFileSize;
     
     
     @GetMapping("/")
@@ -50,6 +55,19 @@ public class ChatController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
         
+        // 파일 사이즈 체크
+        if (!chatImage.isEmpty()) {
+            try {
+                long fileSize = chatImage.getSize();
+                long maxBytes = Long.parseLong(maxFileSize.substring(0, maxFileSize.length() - 2)) * 1024 * 1024;
+                if (fileSize > maxBytes) {
+                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("파일 크기가 너무 큽니다.");
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파싱 오류");
+            }
+        }
+        
         // 세션에서 닉네임, 프로필사진 가져오기
         String nickname = (String) session.getAttribute("nickname");
         String profileImage = (String) session.getAttribute("profileImage");
@@ -66,8 +84,13 @@ public class ChatController {
         String chatImageName = null;
         // 이미지 파일이 있으면 object storage에 업로드
         if (!chatImage.isEmpty()) {
-            chatImageName = ncpObjectStorageService.uploadFile(bucketName, "images", chatImage);
-            chatDto.setChatImage(chatImageName);
+            
+            try {
+                chatImageName = ncpObjectStorageService.uploadFile(bucketName, "images", chatImage);
+                chatDto.setChatImage(chatImageName);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("object storage 이미지 업로드 실패");
+            }
         }
         
         // db insert

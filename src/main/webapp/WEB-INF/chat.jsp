@@ -72,7 +72,8 @@
             <!-- 채팅 입력창 -->
             <form id="chatInput">
                 <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
-                        tilte="이미지 미리보기">+</button>
+                        tilte="이미지 미리보기">+
+                </button>
                 <input type="file" name="chatImage" id="imageInput" accept="image/*" hidden/>
                 <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
                 <button type="submit" id="sendBtn">전송</button>

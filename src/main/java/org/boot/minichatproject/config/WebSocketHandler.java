@@ -94,7 +94,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     String[] keyValue = param.split("=", 2);
                     params.put(keyValue[0], keyValue[1]);
                 }
-
+                
                 // 세션에 사용자 정보 저장
                 Map<String, String> userInfo = new HashMap<>();
                 userInfo.put("nickname", params.get("nickname"));
@@ -146,7 +146,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // content 키의 값을 이스케이프 처리
         String content = utils.escapeHtml((String) messageMap.get("content"));
         messageMap.put("content", content);
-
+        
         // 메시지 전송
         sendMessageToAll(objectMapper.writeValueAsString(messageMap));
     }
