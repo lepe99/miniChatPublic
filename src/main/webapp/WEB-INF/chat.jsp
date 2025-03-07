@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="css/chat.css">
     <script>
         $(function () {
+            let objectStorageUrl = "${objectStorageUrl}";
+            let imageOptimizerFrontUrl = "${imageOptimizerFrontUrl}";
+            let imageOptimizerBackUrl = "${imageOptimizerBackUrl}";
 
             // 로그인 여부 확인
             let isLogin = "${sessionScope.isLogin}"; // 로그인 됐으면 true
@@ -43,9 +46,14 @@
 
 
             //버튼 클릭시 메세지 전송
-            $("#sendBtn").click(function () {
+            $("#inputForm").submit((e) => {
+                // form 전송 막기
+                e.preventDefault();
+
+                let messageInput = $("#messageInput");
+
                 // messageInput 이 비어있으면 전송하지 않음
-                if ($("#messageInput").val().trim() === "") {
+                if (messageInput.val().trim() === "") {
                     // Toast 보여주기
                     var toastEl = document.getElementById('liveToast');
                     var toast = new bootstrap.Toast(toastEl);
@@ -54,33 +62,35 @@
                     return;
                 }
 
-                let message = {
-                    nickname: "${sessionScope.nickname}",
-                    profileImage: "${sessionScope.profileImage}",
-                    content: $("#messageInput").val()
-                };
-                // 메세지 전송
-                socket.send(JSON.stringify(message));
-
+                // formdata 가져오기
+                let formData = new FormData($("#chatInput")[0]);
                 // db에 저장
                 $.ajax({
                     url: "insert",
                     type: "post",
-                    data: {content: $("#messageInput").val()},
+                    data: formData,
                     success: (response) => {
-                        if (response === "success") {
-                            console.log("메세지 저장 성공");
-                        } else {
-                            console.log("메세지 저장 실패");
-                        }
+                        console.log("메세지 저장 성공");
+
+                        // 메세지 객체 생성
+                        let message = {
+                            nickname: "${sessionScope.nickname}",
+                            profileImage: "${sessionScope.profileImage}",
+                            content: messageInput.val(),
+                            chatImage: response
+                        };
+                        // 웹소켓 메세지 전송
+                        socket.send(JSON.stringify(message));
+
                     },
                     error : (xhr, status, error) => {
                         console.error("status: " + xhr.status);
                         console.error("error: " + error);
                     }
                 });
+
                 // 입력창 초기화
-                $("#messageInput").val("");
+                messageInput.val("");
             });
 
             //엔터 키 입력시 메세지 전송
@@ -177,7 +187,13 @@
                 messageHtml += `
                     <div class="myMessage">
                         <span class="timestamp">\${time}</span>
-                        <div class="myContents">\${message.content}</div>
+                        <div class="myContents">
+                            <c:if test="\${message.chatImage != null}">
+                                <img src="\${imageOptimizerFrontUrl}/\${message.chatImage}\${imageOptimizerBackUrl}"
+                                class="chatImage" alt="\${message.chatImage}">
+                            </c:if>
+                            \${message.content}
+                        </div>
                     </div>
                     `;
             } else {
@@ -188,7 +204,13 @@
                             <img src="\${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">\${message.nickname}</span>
                         </div>
-                        <div class="otherContents">\${message.content}</div>
+                        <div class="otherContents">
+                            <c:if test="\${message.chatImage != null}">
+                                <img src="\${imageOptimizerFrontUrl}/\${message.chatImage}\${imageOptimizerBackUrl}"
+                                class="chatImage" alt="\${message.chatImage}">
+                            </c:if>
+                            \${message.content}
+                        </div>
                         <span class="timestamp">\${time}</span>
                     </div>
                     `;

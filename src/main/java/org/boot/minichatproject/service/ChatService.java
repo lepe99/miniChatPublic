@@ -13,6 +13,10 @@ import java.util.List;
 public class ChatService {
     
     private final ChatMapper chatMapper;
+    private final NcpObjectStorageService ncpObjectStorageService;
+    
+    // 버킷 이름
+    private final String bucketName = "minichat-image";
     
     // 채팅 목록 조회 (최근 100개)
     public List<ChatDto> selectChatList() {
@@ -27,6 +31,11 @@ public class ChatService {
         int chatCount = chatMapper.selectChatCount();
         // 채팅이 100개 이상이면 가장 오래된 채팅 삭제
         if (chatCount > 100) {
+            // object storage에서 이미지 삭제
+            String firstChatImage = chatMapper.selectFirstChatImage();
+            if (firstChatImage != null) {
+                ncpObjectStorageService.deleteFile(bucketName, "images", firstChatImage);
+            }
             chatMapper.deleteFirstChat();
         }
     }

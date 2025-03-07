@@ -9,12 +9,18 @@
     </select>
 
     <insert id="insertChat" parameterType="ChatDto">
-        insert into chat (nickname, profileImage, message)
-        values (#{nickname}, #{profileImage}, #{message})
+        insert into chat (nickname, profileImage, message, chatImage)
+        values (#{nickname}, #{profileImage}, #{message}, #{chatImage})
     </insert>
 
     <select id="selectChatCount" resultType="int">
         select count(*) from chat
+    </select>
+
+    <select id="selectFistChatImage" resultType="String">
+        select chatImage from chat
+        order by idx asc
+        limit 1
     </select>
     
     <delete id="deleteFirstChat">
