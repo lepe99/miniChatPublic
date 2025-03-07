@@ -1,10 +1,13 @@
 package org.boot.minichatproject.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.dto.ChatDto;
 import org.boot.minichatproject.service.ChatService;
 import org.boot.minichatproject.service.NcpObjectStorageService;
 import org.boot.minichatproject.util.Utils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +42,21 @@ public class ChatController {
     
     @PostMapping("/insert")
     @ResponseBody
-    public String insert(@RequestParam String message, @SessionAttribute String nickname,
-                         @SessionAttribute String profileImage, @RequestParam("chatImage") MultipartFile chatImage) {
+    public ResponseEntity<?> insert(HttpSession session, @RequestParam String message,
+                                    @RequestParam("chatImage") MultipartFile chatImage) {
+        
+        // 세션이 없는경우 401 Unauthorized
+        if (session.getAttribute("isLogin") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        
+        // 세션에서 닉네임, 프로필사진 가져오기
+        String nickname = (String) session.getAttribute("nickname");
+        String profileImage = (String) session.getAttribute("profileImage");
+        
         // 채팅 등록
         ChatDto chatDto = new ChatDto();
-        // 닉네임, 프로필사진은 세션에서 가져옴
+        // 닉네임, 프로필사진 세팅
         chatDto.setNickname(nickname);
         chatDto.setProfileImage(profileImage);
         // 메시지는 이스케이프 처리
@@ -61,6 +74,6 @@ public class ChatController {
         chatService.addChat(chatDto);
         
         // 채팅 이미지 파일명 반환
-        return chatImageName;
+        return ResponseEntity.ok(chatImageName);
     }
 }
