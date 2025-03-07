@@ -118,6 +118,9 @@ $(function () {
         // formdata 가져오기
         let formData = new FormData($("#chatInput")[0]);
 
+        // messageInput 값 미리 받아오기
+        let messageInputValue = messageInput.val();
+
         // 입력창 초기화
         messageInput.val("");
         imageInput.val("");
@@ -137,7 +140,7 @@ $(function () {
                 let message = {
                     nickname: window.nickname,
                     profileImage: window.profileImage,
-                    content: messageInput.val(),
+                    content: messageInputValue,
                     chatImage: response
                 };
                 // 웹소켓 메세지 전송
