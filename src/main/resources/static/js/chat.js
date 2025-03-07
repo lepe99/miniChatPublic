@@ -207,27 +207,26 @@ $(function () {
         clearTimeout(pingTimeout);
     }
 
+    // ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
+    function resetPingTimeout() {
+        clearTimeout(pingTimeout);
+        pingTimeout = setTimeout(() => {
+            // 세션 해제 요청 (서버에 알림)
+            $.ajax({
+                url: "/logout",
+                type: "post",
+                success: () => {
+                    alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
+                    location.href = '/login';
+                },
+                error: (xhr, status, error) => {
+                    alert("오류 발생. 상태 코드 : " + xhr.status);
+                }
+            });
+
+        }, PING_INTERVAL * 2); // ping의 두배 간격으로 설정. 안정성을 높임.
+    }
 });
-
-// ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
-function resetPingTimeout() {
-    clearTimeout(pingTimeout);
-    pingTimeout = setTimeout(() => {
-        // 세션 해제 요청 (서버에 알림)
-        $.ajax({
-            url: "/logout",
-            type: "post",
-            success: () => {
-                alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
-                location.href = '/login';
-            },
-            error: (xhr, status, error) => {
-                alert("오류 발생. 상태 코드 : " + xhr.status);
-            }
-        });
-
-    }, PING_INTERVAL * 2); // ping의 두배 간격으로 설정. 안정성을 높임.
-}
 
 // 유저 리스트 출력
 function displayUserList(userList) {
