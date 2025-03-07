@@ -32,8 +32,9 @@
 </head>
 <body>
 <div id="chatContainer" class="frame">
+    <div class="background">
     <div id="header">
-        <span>채팅창</span>
+<%--        <span id="chatTitle">BitSync502</span>--%>
         <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
            id="popoverBtn">
             <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
@@ -88,6 +89,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </body>
 </html>

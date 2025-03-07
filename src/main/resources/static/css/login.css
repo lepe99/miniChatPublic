@@ -1,11 +1,4 @@
 
-.frame{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
 /*.loginwindow{*/
 /*    display: flex;*/
 /*    flex-direction: column;*/
@@ -19,6 +12,8 @@
 /*    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1); !* 그림자 추가 *!*/
 /*    color: white;*/
 /*}*/
+
+
 .loginbtn{
     margin-top: 10px;
 }
@@ -32,12 +27,14 @@
 
 #welcome{
     font-size: 50px;
+    color: rgba(255,255,255,0.8);
 }
 
 #bitsync{
     font-size: 25px;
+    color: rgba(255,255,255,0.8);
 }
 #logintext{
     font-size: 15px;
-    color: gray;
+    color: rgba(255,255,255,0.6);
 }

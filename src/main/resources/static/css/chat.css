@@ -1,7 +1,7 @@
 
 #topImage {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 20px;
 }
 
@@ -21,20 +21,20 @@
 
 .profile{
     margin-bottom: 15px;
-    margin-left: 20px;
 }
 
 /* 왼쪽 유저 목록 */
 #userList {
     width: 15%; /* 전체 화면의 15% 차지 */
     min-width: 200px; /* 최소 너비 */
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(228, 228, 228, 0.5)); /* 투명도 적용*/
-    color: white;
-    border-radius: 20px;
-    padding: 20px;
+    /*background: rgba(0,0,0,0.1);*/
+    color: rgba(255,255,255,0.8);
+    border-radius: 30px;
+    padding: 15px;
+    margin: 15px 0 15px 15px;
     display: flex;
     flex-direction: column; /* 내부 요소를 세로 정렬 */
-    margin-right: 15px;
+    /*box-shadow: 3px 3px 5px rgba(0,0,0,0.3);*/
     overflow-y: auto; /* 스크롤 가능하도록 */
 }
 /* Chrome, Edge, Safari에서 적용 */
@@ -52,27 +52,22 @@
     border-radius: 10px;
 }
 
-#chatContainer {
-    display: flex;
-    flex-direction: column; /* 상단(top)과 나머지 부분을 세로 정렬 */
-    height: 100vh;
-    padding: 30px;
-}
-
 /* 상단 박스 */
 #header {
     display: flex;
-    height: 50px;
+    height: 40px;
     border-radius: 18px;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(228, 228, 228, 0.3)); /* 투명도 적용*/
+    margin-top: 15px;
+    background: rgba(0,0,0,0.3);
     align-items: center; /* 수직 가운데 정렬 */
-    position: relative;
-    color: white;
+    /*color: white;*/
+    padding: 20px;
+    /*align-self: flex-end;*/
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
-#header>span {
-    margin-left: 20px;
-}
+/*#chatTitle{*/
+/*    margin-left: 15px;*/
+/*}*/
 
 #popoverBtn {
     display: flex;
@@ -80,8 +75,9 @@
     align-items: center;
     cursor: pointer;
     text-decoration: none;
-    color: white;
-    margin-right: 20px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 600;
+    /*margin-right: 20px;*/
 }
 
 /* 아래 영역을 가로 배치 */
@@ -89,6 +85,7 @@
     display: flex;
     flex: 1; /* 남은 공간을 모두 차지 */
     overflow: hidden;
+    width: 100%;
 }
 
 /* 오른쪽 채팅 영역 */
@@ -96,8 +93,10 @@
     flex: 1; /* 남은 공간을 모두 차지 */
     display: flex;
     flex-direction: column;
-    min-width: 0;
-
+    width: 100%;
+    justify-content: flex-start;
+    max-height: 100%;
+    margin:10px 20px 10px 10px;
 }
 
 #chatBox {
@@ -106,11 +105,14 @@
     flex-direction: column;
     border-radius: 20px;
     padding: 10px;
-    margin-bottom: 5px;
+    margin: 10px;
     min-height: 200px; /* 최소 높이 설정 */
     /*max-height: 770px;*/
+    width: 100%;
     overflow-y: auto; /* 스크롤 가능하도록 */
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(228, 228, 228, 0.3)); /* 투명도 적용*/
+    background: rgba(0, 0, 0, 0.3); /* 투명도 적용*/
+    /*box-shadow: 3px 3px 10px rgba(0,0,0,0.3);*/
+    /*backdrop-filter: blur(1px);*/
 }
 
 /* Chrome, Edge, Safari에서 적용 */
@@ -119,34 +121,35 @@
 }
 
 #chatBox::-webkit-scrollbar-thumb {
-    background: #808080;
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 10px; /* 둥근 모서리 */
 }
 
 #chatBox::-webkit-scrollbar-track {
-    background: lightgray;
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
 #chatInput {
     display: flex;
-    /*background-color: #82ba7e;*/
     height: 50px;
     padding-top: 8px;
-
 }
 
 #chatInput input {
     flex: 1;
-    border: 1px solid lightgray;
+    border: 1px solid rgba(0,0,0,0.1);
     border-radius: 10px;
     outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
 #imageInputBtn{
     margin-right: 5px;
     width: 35px;
     border: none;
-    background: linear-gradient(135deg, #e2ff9a, #a6b376);
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     border-radius: 10px;
     color: #253717;
     cursor: pointer;
@@ -156,7 +159,8 @@
     margin-left: 5px;
     width: 60px;
     border: none;
-    background: linear-gradient(135deg, #e2ff9a, #a6b376);
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     border-radius: 10px;
     color: #253717;
     cursor: pointer;
@@ -169,24 +173,32 @@
 }
 .myContents {
     justify-content: flex-end;
-    background: #82a676;
+    background: rgba(0, 0, 0, 0.4);;
     padding: 10px;
-    color: #ffffff;
+    color: #dfdfdf;
     border-radius: 15px;
     display: inline-block;
     max-width: 60%;
     align-self: flex-end;
     margin-bottom: 15px;
+    font-size: 16px;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
     margin-left: 5px;
 }
+.otherMessage{
+    display: flex;
+    flex-direction: row;  /* row 방향 유지 */
+    align-items: flex-end; /* 세로 방향 정렬 (선택사항) */
+}
 
 .otherContents {
     justify-content: flex-start;
-    background-color: #f1f0f0;
+    background-color: rgba(255, 255, 255, 0.7);;
+    font-size: 16px;
     padding: 8px;
+    color: #232323;
     border-radius: 10px;
     align-self: flex-start;
     max-width: 60%;
@@ -196,24 +208,38 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
+    margin-right: 5px;
 }
 .date{
     text-align: center;
-    color: #9b9eb6;
+    color: #494949;
     font-size: 14px;
     margin: 5px 0;
 }
-
+.nickname{
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    font-size: 15px;
+}
 .infoMessage {
+    display: inline-block;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);;
+    border-radius: 20px;
     text-align: center;
-    color: #bfcdbf;
-    font-size: 14px;
-    margin: 5px 0;
+    color: #ededed;
+    font-size: 12px;
+    margin: 5px auto;
+    word-wrap: break-word; /* 긴 단어 줄바꿈 */
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 60%;
+    min-width: fit-content;
 }
 
 .timestamp {
     font-size: 12px;
-    color: lightgray;
+    color: #a1a1a1;
 }
 .myTimestamp {
     position: relative;
@@ -221,7 +247,7 @@
 }
 .otherTimestamp{
     position: relative;
-    top: 8px;
+    top: -15px;
 }
 
 #popoverImage{
@@ -248,7 +274,7 @@
     transform: scale(1);/* 자연스럽게 확대 */
 }
 #modalImage{
-    max-height: 70vh;
+    max-height: 60vh;
     max-width: 70vh;
 }
 
@@ -260,13 +286,4 @@
     max-width: 80%;
     max-height: 80%;
     overflow: auto;
-}
-
-/* 닫기 버튼 */
-.closeBtn {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    font-size: 30px;
-    cursor: pointer;
 }
