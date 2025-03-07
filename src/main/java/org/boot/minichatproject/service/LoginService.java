@@ -62,7 +62,8 @@ public class LoginService {
             
             // 파싱한 값으로 객체 반환
             String nickname = properties.get("nickname").getAsString();
-            String profileImage = properties.get("profile_image").getAsString();
+            // 썸네일 이미지 URL로 설정 (thumbnail_image) , 부하 감소 위해
+            String profileImage = properties.get("thumbnail_image").getAsString();
             return new KakaoUserInfo(nickname, profileImage);
         } else {
             System.err.println("Kakao API 응답 오류: " + response.getStatusCode());

@@ -1,6 +1,8 @@
 package org.boot.minichatproject.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.boot.minichatproject.util.Utils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -13,14 +15,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@RequiredArgsConstructor
 public class WebSocketHandler extends TextWebSocketHandler {
+    // JSON 매핑을 위한 ObjectMapper
+    private final ObjectMapper objectMapper;
+    // 유틸리티 클래스
+    private final Utils utils;
+    
     // 동시성 문제 해결 위해 ConcurrentHashMap 사용
     // 웹소켓 세션을 저장할 set
     private Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
     // 세션과 사용자 정보를 매핑할 맵
     private Map<WebSocketSession, Map<String, String>> sessionInfo = new ConcurrentHashMap<>();
-    // JSON 매핑을 위한 ObjectMapper
-    private final ObjectMapper objectMapper = new ObjectMapper();
     
     // 웹소켓 연결이 열리고 사용이 준비될 때 호출
     @Override
@@ -59,12 +65,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메세지 처리
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        // 메세지 html 이스케이프 처리
+//        String escapedMessage = utils.escapeHtml(message.getPayload());
+        
         // getPayload(): 메시지 내용을 문자열로 반환
         Map<String, Object> messageMap = objectMapper.readValue(message.getPayload(), Map.class);
-        Map<String, String> userInfo = sessionInfo.get(session);
         
-        messageMap.put("nickname", userInfo.get("nickname"));
-        messageMap.put("profileImage", userInfo.get("profileImage"));
+        // content 키의 값을 이스케이프 처리
+        String content = utils.escapeHtml((String) messageMap.get("content"));
+        messageMap.put("content", content);
+
         // 메시지 전송
         sendMessageToAll(objectMapper.writeValueAsString(messageMap));
     }
