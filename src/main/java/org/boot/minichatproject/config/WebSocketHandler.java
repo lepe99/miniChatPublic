@@ -57,9 +57,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
         while (true) {
             try {
                 TextMessage message = messageQueue.take(); // 큐에서 메시지 가져오기 (blocking)
-                for (WebSocketSession session : sessions) {
-                    if (session.isOpen()) {
-                        session.sendMessage(message); // 메시지 전송
+                // sessions에 대한 반복 동기화
+                synchronized (sessions) {
+                    for (WebSocketSession session : sessions) {
+                        if (session.isOpen()) {
+                            session.sendMessage(message); // 메시지 전송
+                        }
                     }
                 }
             } catch (InterruptedException e) {
@@ -219,8 +222,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             try {
                 if (session.isOpen()) {
                     session.close(CloseStatus.SESSION_NOT_RELIABLE);
-                    System.out.println("Idle 타임아웃으로 인한 웹소켓 연결 종료: " + session.getId());
                 }
+                // 세션 정보 삭제
+                sessions.remove(session);
+                System.out.println("Idle 타임아웃으로 인한 웹소켓 연결 종료 및 세션 제거: " + session.getId());
             } catch (IOException e) {
                 System.err.println("세션 종료 중 오류 발생: " + e.getMessage());
             }
