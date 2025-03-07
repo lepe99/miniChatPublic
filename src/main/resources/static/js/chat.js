@@ -2,6 +2,9 @@ $(function () {
 
     let imagePopover = null;
 
+    // 웹소켓 연결
+    connectWebSocket();
+
     // + 버튼 선택시 파일선택
     $("#imageInputBtn").click(function () {
         $("#imageInput").click();
@@ -104,6 +107,12 @@ $(function () {
         let messageInput = $("#messageInput");
         let imageInput = $("#imageInput");
 
+        // 웹소켓 해제 시 재연결 시도
+        if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+            console.log("웹소켓 재연결 시도");
+            connectWebSocket();
+        }
+
 
         // messageInput 이 비어있으면 전송하지 않음
         if (messageInput.val().trim() === "" && imageInput.val().trim() === "") {
@@ -161,6 +170,10 @@ $(function () {
 
     });
 
+});
+
+// 웹소켓 연결
+function connectWebSocket() {
     // url 에 넣을 세션 정보 받아오기
     const nickname = encodeURIComponent(`${window.nickname}`);
     const profileImage = encodeURIComponent(`${window.profileImage}`);
@@ -208,21 +221,11 @@ $(function () {
         clearTimeout(pingTimeout);
         pingTimeout = setTimeout(() => {
             // 세션 해제 요청 (서버에 알림)
-            $.ajax({
-                url: "/logout",
-                type: "post",
-                success: () => {
-                    alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
-                    location.href = '/login';
-                },
-                error: (xhr, status, error) => {
-                    alert("오류 발생. 상태 코드 : " + xhr.status);
-                }
-            });
-
-        }, PING_INTERVAL * 2); // ping의 두배 간격으로 설정. 안정성을 높임.
+            alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
+            location.href = '/login';
+        }, PING_INTERVAL * 1.2); // ping의 1.2배 간격으로 설정. 안정성을 높임.
     }
-});
+}
 
 // 유저 리스트 출력
 function displayUserList(userList) {
