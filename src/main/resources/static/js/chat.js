@@ -156,32 +156,31 @@ $(function () {
     const host = window.location.host;
     // 웹소켓 연결, url에 세션 정보 포함하기
     let socket = new WebSocket(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
-    console.log(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
 
     // 웹소켓으로부터 메세지 수신
     socket.onmessage = (event) => {
         // ping 메세지 응답
         if (event.data === "ping") {
             socket.send("pong");
-        } else {
-            // 수신된 메세지를 JSON으로 파싱
-            let message = JSON.parse(event.data);
+            return;
+        }
+        // 수신된 메세지를 JSON으로 파싱
+        let message = JSON.parse(event.data);
 
-            if (message.type === "enter") {
-                // 입장 메세지 처리
-                let userInfo = message.userInfo;
-                displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
-            } else if (message.type === "leave") {
-                // 퇴장 메세지 처리
-                let userInfo = message.userInfo;
-                displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
-            } else if (message.type === "userList") {
-                // 유저 리스트 처리
-                displayUserList(message.userList);
-            } else {
-                // 일반 메세지 처리
-                displayMessage(message);
-            }
+        if (message.type === "enter") {
+            // 입장 메세지 처리
+            let userInfo = message.userInfo;
+            displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
+        } else if (message.type === "leave") {
+            // 퇴장 메세지 처리
+            let userInfo = message.userInfo;
+            displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
+        } else if (message.type === "userList") {
+            // 유저 리스트 처리
+            displayUserList(message.userList);
+        } else {
+            // 일반 메세지 처리
+            displayMessage(message);
         }
     };
 
