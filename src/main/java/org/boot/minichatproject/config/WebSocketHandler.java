@@ -148,13 +148,15 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메세지 처리
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // lastMessageTime 업데이트, 동기화
-        lastMessageTime.put(session, Instant.now().toEpochMilli());
-        
         // 클라이언트로부터 "pong" 메시지가 오면 heartbeat 응답 간주
         if ("pong".equals(message.getPayload())) {
             return;
         }
+        
+        // lastMessageTime 업데이트, 동기화
+        lastMessageTime.put(session, Instant.now().toEpochMilli());
+        
+
         
         // getPayload(): 메시지 내용을 문자열로 반환
         Map<String, Object> messageMap = objectMapper.readValue(message.getPayload(), Map.class);
