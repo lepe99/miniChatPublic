@@ -16,16 +16,75 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="css/chat.css">
     <script>
-        $(function () {
-            let objectStorageUrl = "${objectStorageUrl}";
-            let imageOptimizerFrontUrl = "${imageOptimizerFrontUrl}";
-            let imageOptimizerBackUrl = "${imageOptimizerBackUrl}";
+        let objectStorageUrl = "${objectStorageUrl}";
+        let imageOptimizerFrontUrl = "${imageOptimizerFrontUrl}";
+        let imageOptimizerBackUrl = "${imageOptimizerBackUrl}";
 
-            // 로그인 여부 확인
-            let isLogin = "${sessionScope.isLogin}"; // 로그인 됐으면 true
-            if (!isLogin) {
-                location.href = '/login';
-            }
+        // 로그인 여부 확인
+        let isLogin = "${sessionScope.isLogin}"; // 로그인 됐으면 true
+        if (!isLogin) {
+            location.href = '/login';
+        }
+
+        $(function () {
+
+            // 채팅 사진 undefined 일시 숨기기
+            $(".chatImage").each((i, e) => {
+
+            });
+
+            let imagePopover = null;
+
+            // + 버튼 선택시 파일선택
+            $("#imageInputBtn").click(function (){
+                $("#imageInput").click();
+            });
+
+            //파일 선택시 이미지 미리보기 생성 (popover)
+            $("#imageInput").change(function (event){
+                let file= event.target.files[0];
+
+                if(file){
+                    let reader = new FileReader();
+                    reader.onload = function (e){
+                        let imageInputHtml = `
+                        <img src="\${e.target.result}" id="popoverImage">`;
+                        //기존 Popover 제거(중복방지)
+                        if(imagePopover){
+                            imagePopover.dispose();
+                            imagePopover=null;
+                        }
+
+                        //popover 생성 및 내용 업데이트
+                        $("#imageInputBtn").attr("data-bs-content",imageInputHtml);
+                        //새로초기화
+                        imagePopover = new bootstrap.Popover($("#imageInputBtn")[0],{
+                            html:true,
+                            trigger:"manual",
+                            placement:"top"
+                        });
+                        imagePopover.show(); //popover 표시
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // **바깥 클릭 시 popover 닫기**
+            $(document).on("click", function (event) {
+                // popover가 열려 있고, 클릭한 요소가 popover 내부가 아니라면 닫기
+                if (imagePopover && !$(event.target).closest("#imageInputBtn, .popover").length) {
+                    imagePopover.dispose();
+                    imagePopover = null;
+                }
+            });
+
+            //외부 클릭시 popover 닫기
+            // Popover 외부 클릭 시 닫기
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest("#popoverBtn").length) {
+                    $("#popoverBtn").popover("hide");
+                }
+            });
 
             // popover a태그 기본방지
             document.querySelectorAll('#popoverBtn').forEach(function (el) {
@@ -46,14 +105,17 @@
 
 
             //버튼 클릭시 메세지 전송
-            $("#inputForm").submit((e) => {
-                // form 전송 막기
+            $("#chatInput").submit((e) => {
                 e.preventDefault();
 
                 let messageInput = $("#messageInput");
+                let imageInput = $("#imageInput");
+
+                // 세션이 만료되었을 경우 로그인 페이지 리다이렉트
+                if (!isLogin) location.href = '/login';
 
                 // messageInput 이 비어있으면 전송하지 않음
-                if (messageInput.val().trim() === "") {
+                if (messageInput.val().trim() === "" && imageInput.val().trim() === "") {
                     // Toast 보여주기
                     var toastEl = document.getElementById('liveToast');
                     var toast = new bootstrap.Toast(toastEl);
@@ -69,6 +131,8 @@
                     url: "insert",
                     type: "post",
                     data: formData,
+                    contentType: false,
+                    processData: false,
                     success: (response) => {
                         console.log("메세지 저장 성공");
 
@@ -82,6 +146,10 @@
                         // 웹소켓 메세지 전송
                         socket.send(JSON.stringify(message));
 
+                        // 입력창 초기화
+                        messageInput.val("");
+                        $("#imageInput").val("");
+
                     },
                     error : (xhr, status, error) => {
                         console.error("status: " + xhr.status);
@@ -89,18 +157,7 @@
                     }
                 });
 
-                // 입력창 초기화
-                messageInput.val("");
             });
-
-            //엔터 키 입력시 메세지 전송
-            $("#messageInput").keypress(function (event) {
-                if (event.which === 13) {    //Enter 아스키
-                    $("#sendBtn").click();
-                }
-            });
-
-
 
             // url 에 넣을 세션 정보 받아오기
             const nickname = encodeURIComponent("${sessionScope.nickname}");
@@ -184,36 +241,58 @@
             }
             if (message.nickname === "${sessionScope.nickname}") {
                 //내 메세지(오른쪽 하단 정렬, 프로필 닉네임 표시안하고 타임스탬프 왼쪽)
-                messageHtml += `
+                if (message.chatImage === "") {
+                    messageHtml += `
                     <div class="myMessage">
                         <span class="timestamp">\${time}</span>
                         <div class="myContents">
-                            <c:if test="\${message.chatImage != null}">
-                                <img src="\${imageOptimizerFrontUrl}/\${message.chatImage}\${imageOptimizerBackUrl}"
-                                class="chatImage" alt="\${message.chatImage}">
-                            </c:if>
                             \${message.content}
                         </div>
                     </div>
                     `;
+                } else {
+                    messageHtml += `
+                    <div class="myMessage">
+                        <span class="timestamp">\${time}</span>
+                        <div class="myContents">
+                            <img src="\${imageOptimizerFrontUrl}/images/\${message.chatImage}\${imageOptimizerBackUrl}"
+                            class="chatImage" alt="\${message.chatImage}">
+                            \${message.content}
+                        </div>
+                    </div>
+                    `;
+                }
             } else {
                 //상대방메세지 (왼쪽 하단 정렬, 프로필+닉네임 표시 , 타임스탬프 오른쪽)
-                messageHtml += `
+                if (message.chatImage === "") {
+                    messageHtml += `
                     <div class="otherMessage">
                         <div class="otherChatProfile">
                             <img src="\${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">\${message.nickname}</span>
                         </div>
                         <div class="otherContents">
-                            <c:if test="\${message.chatImage != null}">
-                                <img src="\${imageOptimizerFrontUrl}/\${message.chatImage}\${imageOptimizerBackUrl}"
-                                class="chatImage" alt="\${message.chatImage}">
-                            </c:if>
                             \${message.content}
                         </div>
                         <span class="timestamp">\${time}</span>
                     </div>
                     `;
+                } else {
+                    messageHtml += `
+                    <div class="otherMessage">
+                        <div class="otherChatProfile">
+                            <img src="\${message.profileImage}" class="chatProfileImage">
+                            <span class="nickname">\${message.nickname}</span>
+                        </div>
+                        <div class="otherContents">
+                            <img src="\${imageOptimizerFrontUrl}/images/\${message.chatImage}\${imageOptimizerBackUrl}"
+                            class="chatImage" alt="\${message.chatImage}">
+                            \${message.content}
+                        </div>
+                        <span class="timestamp">\${time}</span>
+                    </div>
+                    `;
+                }
             }
 
             // console.log("추가할 HTML:", messageHtml); // ✅ HTML 코드 확인
@@ -259,7 +338,8 @@
                         message = {
                             nickname: "${chat.nickname}",
                             profileImage: "${chat.profileImage}",
-                            content: "${chat.message}"
+                            content: "${chat.message}",
+                            chatImage: "${chat.chatImage}"
                         };
                         timestamp = new Date(${chat.createdAt.time});
 
@@ -270,10 +350,13 @@
 
             </div>
             <!-- 채팅 입력창 -->
-            <div id="chatInput">
-                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
-                <button id="sendBtn">전송</button>
-            </div>
+            <form id="chatInput">
+                <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
+                        tilte="이미지 미리보기">+</button>
+                <input type="file" name="chatImage" id="imageInput" hidden/>
+                <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
+                <button type="submit" id="sendBtn">전송</button>
+            </form>
         </div>
     </div>
 

@@ -17,7 +17,7 @@
         select count(*) from chat
     </select>
 
-    <select id="selectFistChatImage" resultType="String">
+    <select id="selectFirstChatImage" resultType="String">
         select chatImage from chat
         order by idx asc
         limit 1

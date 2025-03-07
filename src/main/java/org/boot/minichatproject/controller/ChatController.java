@@ -39,7 +39,7 @@ public class ChatController {
     
     @PostMapping("/insert")
     @ResponseBody
-    public String insert(@RequestParam String content, @SessionAttribute String nickname,
+    public String insert(@RequestParam String message, @SessionAttribute String nickname,
                          @SessionAttribute String profileImage, @RequestParam("chatImage") MultipartFile chatImage) {
         // 채팅 등록
         ChatDto chatDto = new ChatDto();
@@ -47,8 +47,8 @@ public class ChatController {
         chatDto.setNickname(nickname);
         chatDto.setProfileImage(profileImage);
         // 메시지는 이스케이프 처리
-        String escapedContents = utils.escapeHtml(content);
-        chatDto.setMessage(escapedContents);
+        String escapedMessage = utils.escapeHtml(message);
+        chatDto.setMessage(escapedMessage);
         
         String chatImageName = null;
         // 이미지 파일이 있으면 object storage에 업로드

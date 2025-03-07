@@ -36,6 +36,7 @@ public class ChatService {
             if (firstChatImage != null) {
                 ncpObjectStorageService.deleteFile(bucketName, "images", firstChatImage);
             }
+            // db에서 채팅 삭제
             chatMapper.deleteFirstChat();
         }
     }
