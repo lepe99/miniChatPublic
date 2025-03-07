@@ -35,7 +35,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
     private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
-    private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
+    private static final long IDLE_TIMEOUT_MS = 6000000; // 600초 (10분) 동안 메시지 없으면 연결 종료
     
     // 메세지 큐 사용위한 큐
     private final BlockingQueue<TextMessage> messageQueue = new LinkedBlockingQueue<>();
