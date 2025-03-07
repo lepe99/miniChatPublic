@@ -11,8 +11,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -27,6 +31,12 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
     // 세션과 사용자 정보를 매핑할 맵
     private Map<WebSocketSession, Map<String, String>> sessionInfo = new ConcurrentHashMap<>();
+    
+    // Heartbeat 및 Idle 타임아웃 관련 필드
+    private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
+    private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
+    private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
     
     // 웹소켓 연결이 열리고 사용이 준비될 때 호출
     @Override
@@ -58,6 +68,24 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         
+        // lastMessageTime에 현재 시간 저장
+        lastMessageTime.put(session, Instant.now().toEpochMilli());
+        
+        // 주기적으로 heartbeat 전송
+        executorService.scheduleAtFixedRate(() -> {
+            try {
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage("ping")); // ping 메세지 전송
+                }
+            } catch (IOException e) {
+                System.err.println("Heartbeat 전송 중 오류 발생: " + e.getMessage());
+            }
+        }, 0, HEARTBEAT_INTERVAL_MS, TimeUnit.MILLISECONDS);
+        
+        // 주기적으로 연결 상태 확인 및 idle 타임아웃 체크
+        // 10초마다 체크
+        executorService.scheduleAtFixedRate(this::checkIdleSessions, 0, 10, TimeUnit.SECONDS);
+        
         // 유저 리스트 전송
         sendUserList();
     }
@@ -65,8 +93,13 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메세지 처리
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // 메세지 html 이스케이프 처리
-//        String escapedMessage = utils.escapeHtml(message.getPayload());
+        // lastMessageTime 업데이트
+        lastMessageTime.put(session, Instant.now().toEpochMilli());
+        
+        // 클라이언트로부터 "pong" 메시지가 오면 heartbeat 응답 간주
+        if ("pong".equals(message.getPayload())) {
+            return;
+        }
         
         // getPayload(): 메시지 내용을 문자열로 반환
         Map<String, Object> messageMap = objectMapper.readValue(message.getPayload(), Map.class);
@@ -88,6 +121,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 세션 정보 삭제
         sessions.remove(session);
         sessionInfo.remove(session);
+        lastMessageTime.remove(session); // 타임아웃 관련 정보도 같이 제거
         
         // 종료 메시지 생성, 전송 (NullPointerException 방지)
         if (userInfo != null) {
@@ -102,7 +136,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메시지 전송
     private void sendMessageToAll(String message) throws IOException {
         for (WebSocketSession session : sessions) {
-            session.sendMessage(new TextMessage(message));
+            if (session.isOpen()) {
+                session.sendMessage(new TextMessage(message));
+            }
         }
     }
     
@@ -126,5 +162,26 @@ public class WebSocketHandler extends TextWebSocketHandler {
         message.put("type", "userList");
         message.put("userList", userList);
         sendMessageToAll(objectMapper.writeValueAsString(message));
+    }
+    
+    // idle 세션 체크
+    private void checkIdleSessions() {
+        long now = Instant.now().toEpochMilli();
+        for (WebSocketSession session : sessions) {
+            Long lastTime = lastMessageTime.get(session);
+            if (lastTime == null) {
+                continue;
+            }
+            if (now - lastTime > IDLE_TIMEOUT_MS) {
+                try {
+                    if (session.isOpen()) {
+                        session.close(CloseStatus.SESSION_NOT_RELIABLE);
+                        System.out.println("Idle 타임아웃으로 인한 웹소켓 연결 종료: " + session.getId());
+                    }
+                } catch (IOException e) {
+                    System.err.println("세션 종료 중 오류 발생: " + e.getMessage());
+                }
+            }
+        }
     }
 }
