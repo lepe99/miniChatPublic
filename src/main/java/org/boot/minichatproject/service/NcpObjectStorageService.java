@@ -48,7 +48,8 @@ public class NcpObjectStorageService implements NcpObjectStorageMapper {
                     + "." + ext;
             
             ObjectMetadata objectMetadata = new ObjectMetadata(); // 파일의 메타데이터를 저장하는 클래스
-            objectMetadata.setContentType(file.getContentType());
+            objectMetadata.setContentType(file.getContentType()); // 파일 타입
+            objectMetadata.setContentLength(file.getSize()); // 파일 크기
             
             // PutObjectRequest : 파일을 업로드하는 요청 객체
             /*
