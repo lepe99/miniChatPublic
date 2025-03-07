@@ -79,7 +79,7 @@ $(function () {
     // **바깥 클릭 시 popover 닫기**
     $(document).on("click", function (event) {
         // popover가 열려 있고, 클릭한 요소가 popover 내부가 아니라면 닫기
-        if (imagePopover && !$(event.target).closest("#imageInputBtn, .popover").length) {
+        if (imagePopover && !$(event.target).closest("#chatInput, .popover").length) {
             imagePopover.dispose();
             imagePopover = null;
 
@@ -167,6 +167,11 @@ $(function () {
         messageInput.val("");
         imageInput.val("");
 
+        // popover 닫기
+        if (imagePopover) {
+            imagePopover.dispose();
+            imagePopover = null;
+        }
 
         // db에 저장
         $.ajax({
