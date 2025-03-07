@@ -27,7 +27,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     
     // 동시성 문제 해결 위해 ConcurrentHashMap 사용
     // 웹소켓 세션을 저장할 set
-    private Set<WebSocketSession> sessions = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     // 세션과 사용자 정보를 매핑할 맵
     private Map<WebSocketSession, Map<String, String>> sessionInfo = new ConcurrentHashMap<>();
     
@@ -53,7 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
     
     // 메시지 큐 처리
-    private void processMessageQueue() {
+    private synchronized void processMessageQueue() {
         while (true) {
             try {
                 TextMessage message = messageQueue.take(); // 큐에서 메시지 가져오기 (blocking)
