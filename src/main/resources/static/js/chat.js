@@ -156,6 +156,7 @@ $(function () {
     const host = window.location.host;
     // 웹소켓 연결, url에 세션 정보 포함하기
     let socket = new WebSocket(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
+    console.log(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
 
     // 웹소켓으로부터 메세지 수신
     socket.onmessage = (event) => {
