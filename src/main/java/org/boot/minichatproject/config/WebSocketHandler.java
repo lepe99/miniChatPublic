@@ -1,6 +1,8 @@
 package org.boot.minichatproject.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.util.Utils;
 import org.springframework.stereotype.Component;
@@ -13,10 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Component
 @RequiredArgsConstructor
@@ -37,6 +36,46 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
     private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
     private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
+    
+    // 메세지 큐 사용위한 큐
+    private final BlockingQueue<TextMessage> messageQueue = new LinkedBlockingQueue<>();
+    
+    // 메세지 큐 처리 스레드 시작
+    @PostConstruct
+    public void init() {
+        Thread messageSender = new Thread(this::processMessageQueue);
+        messageSender.start();
+    }
+    
+    // 메시지 전송
+    private void sendMessageToAll(String message) throws IOException {
+        messageQueue.add(new TextMessage(message));
+    }
+    
+    // 메시지 큐 처리
+    private void processMessageQueue() {
+        while (true) {
+            try {
+                TextMessage message = messageQueue.take(); // 큐에서 메시지 가져오기 (blocking)
+                for (WebSocketSession session : sessions) {
+                    if (session.isOpen()) {
+                        session.sendMessage(message); // 메시지 전송
+                    }
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                // 스레드가 interrupt 되면 종료
+                break;
+            } catch (IOException e) {
+                System.err.println("메세지 전송중 에러 발생");
+            }
+        }
+    }
+    
+    @PreDestroy // 빈 소멸 전 호출
+    public void onDestroy() {
+        executorService.shutdownNow(); // executorService  강제 종료
+    }
     
     // 웹소켓 연결이 열리고 사용이 준비될 때 호출
     @Override
@@ -133,15 +172,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         sendUserList();
     }
     
-    // 메시지 전송
-    private void sendMessageToAll(String message) throws IOException {
-        for (WebSocketSession session : sessions) {
-            if (session.isOpen()) {
-                session.sendMessage(new TextMessage(message));
-            }
-        }
-    }
-    
     // 메시지 생성
     private Map<String, Object> createMessage(String type, Map<String, String> userInfo) {
         Map<String, Object> message = new HashMap<>();
@@ -165,7 +195,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
     
     // idle 세션 체크
-    private void checkIdleSessions() {
+    private synchronized void checkIdleSessions() {
         long now = Instant.now().toEpochMilli();
         for (WebSocketSession session : sessions) {
             Long lastTime = lastMessageTime.get(session);

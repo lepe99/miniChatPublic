@@ -159,6 +159,11 @@ $(function () {
 
     // 웹소켓으로부터 메세지 수신
     socket.onmessage = (event) => {
+        // ping 메세지 응답
+        if (event.data === "ping") {
+            socket.send("pong");
+            return;
+        }
         // 수신된 메세지를 JSON으로 파싱
         let message = JSON.parse(event.data);
 
