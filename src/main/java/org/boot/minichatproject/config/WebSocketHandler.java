@@ -53,7 +53,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
     
     // 메시지 큐 처리
-    private synchronized void processMessageQueue() {
+    private void processMessageQueue() {
         while (true) {
             try {
                 TextMessage message = messageQueue.take(); // 큐에서 메시지 가져오기 (blocking)
@@ -102,7 +102,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
                 Map<String, String> userInfo = new HashMap<>();
                 userInfo.put("nickname", params.get("nickname"));
                 userInfo.put("profileImage", params.get("profileImage"));
-                sessionInfo.put(session, userInfo);
+                
+                // sessionInfo 접근 동기화
+                synchronized (sessionInfo) {
+                    sessionInfo.put(session, userInfo);
+                }
                 
                 // 접속 메시지 생성, 전송
                 Map<String, Object> message = createMessage("enter", userInfo);
@@ -110,8 +114,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         
-        // lastMessageTime에 현재 시간 저장
-        lastMessageTime.put(session, Instant.now().toEpochMilli());
+        // lastMessageTime에 현재 시간 저장, 접근 동기화
+        synchronized (lastMessageTime) {
+            lastMessageTime.put(session, Instant.now().toEpochMilli());
+        }
         
         // 주기적으로 heartbeat 전송
         executorService.scheduleAtFixedRate(() -> {
@@ -135,8 +141,10 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 메세지 처리
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // lastMessageTime 업데이트
-        lastMessageTime.put(session, Instant.now().toEpochMilli());
+        // lastMessageTime 업데이트, 동기화
+        synchronized (lastMessageTime) {
+            lastMessageTime.put(session, Instant.now().toEpochMilli());
+        }
         
         // 클라이언트로부터 "pong" 메시지가 오면 heartbeat 응답 간주
         if ("pong".equals(message.getPayload())) {
@@ -157,13 +165,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 웹소켓 연결이 닫힐 때 호출
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        // 세션 정보 먼저 가져오기
-        Map<String, String> userInfo = sessionInfo.get(session);
+        // 세션 정보 먼저 가져오기, 아래 모두 동기화
+        Map<String, String> userInfo;
         
         // 세션 정보 삭제
-        sessions.remove(session);
-        sessionInfo.remove(session);
-        lastMessageTime.remove(session); // 타임아웃 관련 정보도 같이 제거
+        synchronized (sessionInfo) {
+            userInfo = sessionInfo.remove(session);
+        }
+        synchronized (sessions) {
+            sessions.remove(session);
+        }
+        synchronized (lastMessageTime) {
+            lastMessageTime.remove(session); // 타임아웃 관련 정보도 같이 제거
+        }
         
         // 종료 메시지 생성, 전송 (NullPointerException 방지)
         if (userInfo != null) {
@@ -187,8 +201,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private void sendUserList() throws IOException {
         // 사용자 정보를 리스트로 변환
         List<Map<String, String>> userList = new ArrayList<>();
-        for (Map<String, String> userInfo : sessionInfo.values()) {
-            userList.add(userInfo);
+        // sessionInfo의 접근 동기화
+        synchronized (sessionInfo) {
+            for (Map<String, String> userInfo : sessionInfo.values()) {
+                userList.add(userInfo);
+            }
         }
         // message map 생성하여 전송
         Map<String, Object> message = new HashMap<>();
@@ -206,7 +223,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // sessions를 돌면서 idle 체크, 그동안 동기화하여 보호
         synchronized (this) {
             for (WebSocketSession session : sessions) {
-                Long lastTime = lastMessageTime.get(session);
+                Long lastTime;
+                // 접근 동기화
+                synchronized (lastMessageTime) {
+                    lastTime = lastMessageTime.get(session);
+                }
                 if (lastTime == null) {
                     continue;
                 }
