@@ -95,8 +95,9 @@
             // url 에 넣을 세션 정보 받아오기
             const nickname = encodeURIComponent("${sessionScope.nickname}");
             const profileImage = encodeURIComponent("${sessionScope.profileImage}");
+            const host = window.location.host;
             // 웹소켓 연결, url에 세션 정보 포함하기
-            let socket = new WebSocket("ws://223.130.135.96:8090/chat?nickname=" + nickname + "&profileImage=" + profileImage);
+            let socket = new WebSocket(`ws://\${host}/chat?nickname=\${nickname}&profileImage=\${profileImage}`);
 
             // 웹소켓으로부터 메세지 수신
             socket.onmessage = (event) => {
@@ -126,7 +127,20 @@
         function displayUserList(userList) {
             let userListHtml = "";
             $("#userList").empty(); // 기존 유저 리스트 삭제
+
+            // 중복 제거를 위한 Map 선언
+            const uniqueUserList = new Map();
+
             userList.forEach((user) => {
+                const key = `\${user.nickname}-\${user.profileImage}`;
+                uniqueUserList.set(key, user); // 중복 제거
+            });
+
+            // 인원수 표시
+            userListHtml += `인원수 : \${uniqueUserList.size}명<hr>`;
+
+            // 중복 제거된 유저 리스트로 다시 변환
+            uniqueUserList.values().forEach(user => {
                 userListHtml += `
                 <div class="profile">
                     <img src="\${user.profileImage}" class="userProfileImage">
