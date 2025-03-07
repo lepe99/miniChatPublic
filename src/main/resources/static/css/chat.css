@@ -158,6 +158,9 @@ body * {
     max-width: 60%;
     align-self: flex-end;
     margin-bottom: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 .otherMessage {
@@ -169,6 +172,9 @@ body * {
     max-width: 60%;
     display: inline-block;
     margin-bottom: 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 .date{
     text-align: center;
