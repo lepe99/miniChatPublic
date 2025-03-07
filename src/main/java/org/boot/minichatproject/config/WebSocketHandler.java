@@ -48,7 +48,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
     
     // 메시지 전송
-    private void sendMessageToAll(String message) throws IOException {
+    private void sendMessageToAll(String message) {
         messageQueue.add(new TextMessage(message));
     }
     
@@ -128,6 +128,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     synchronized (session) { // 세션 동기화
                         if (session.isOpen()) { // 다시 한번 확인
                             session.sendMessage(new TextMessage("ping")); // ping 메세지 전송
+                            System.out.println("ping");
                         }
                     }
                 }
@@ -217,6 +218,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // sessions를 돌면서 idle 체크
         for (WebSocketSession session : sessions) {
             Long lastTime = lastMessageTime.get(session);
+            System.out.println(now - lastTime);
             
             if (lastTime == null) {
                 continue;
