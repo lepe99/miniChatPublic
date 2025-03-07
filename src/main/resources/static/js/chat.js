@@ -4,8 +4,13 @@ $(function () {
     const nickname = encodeURIComponent(`${window.nickname}`);
     const profileImage = encodeURIComponent(`${window.profileImage}`);
     const host = window.location.host;
+    let socketUrl;
     // 웹소켓 연결, url에 세션 정보 포함하기
-    const socketUrl = `ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
+    if (host.startsWith("localhost")) {
+        socketUrl = `ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
+    } else {
+        socketUrl = `wss://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
+    }
     let socket = new WebSocket(socketUrl);
 
     // 웹소켓으로부터 메세지 수신
