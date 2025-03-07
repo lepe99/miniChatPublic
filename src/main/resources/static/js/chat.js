@@ -8,15 +8,11 @@ $(function () {
     const socketUrl = `ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
     let socket = new WebSocket(socketUrl);
 
-    let pingTimeout;
-    const PING_INTERVAL = 30000; // 30초
-
     // 웹소켓으로부터 메세지 수신
     socket.onmessage = (event) => {
         // ping 메세지 응답
         if (event.data === "ping") {
             socket.send("pong");
-            resetPingTimeout(); // 타이머 초기화
             return;
         }
         // 수신된 메세지를 JSON으로 파싱
@@ -39,18 +35,9 @@ $(function () {
         }
     };
 
-    socket.onopen = () => { // 연결 시 타이머 시작
-        resetPingTimeout();
-    }
-
-    // ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
-    function resetPingTimeout() {
-        clearTimeout(pingTimeout);
-        pingTimeout = setTimeout(() => {
-            // 세션 해제 요청 (서버에 알림)
-            alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
-            location.href = '/login';
-        }, PING_INTERVAL * 1.2); // ping의 1.2배 간격으로 설정. 안정성을 높임.
+    socket.onclose = () => { // 종료 시 메세지 출력
+        alert("장시간 입력이 없어 채팅방을 나갑니다.");
+        location.href = "/logout";
     }
 
     let imagePopover = null;
@@ -156,13 +143,6 @@ $(function () {
 
         let messageInput = $("#messageInput");
         let imageInput = $("#imageInput");
-
-        // 웹소켓 연결이 끊어진 경우 재연결 시도
-        if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
-            console.log("웹소켓 재연결 시도");
-            socket = new WebSocket(socketUrl);
-        }
-
 
         // messageInput 이 비어있으면 전송하지 않음
         if (messageInput.val().trim() === "" && imageInput.val().trim() === "") {
