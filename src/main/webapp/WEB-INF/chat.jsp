@@ -73,6 +73,32 @@
                 }
             });
 
+            //이미지 클릭시 챗모달 띄우기
+            $("#chatBox").on("click", ".chatImage", function (e){
+                let imageAlt = $(e.target).attr("alt");
+                let imageUrl = `\${objectStorageUrl}/images/\${imageAlt}`;
+                $("#modalImage").attr("src",imageUrl);
+
+                let modal = $("#chatModal");
+                modal.css("display", "flex"); // 모달 표시
+
+                //애니메이션 적용
+                requestAnimationFrame(()=>{
+                    modal.addClass("show");
+                });
+            });
+
+            //외부 클릭시 모달 닫기
+            $("#chatModal").on("click",function (e){
+                if (!$(e.target).closest("#modalImage").length){
+                    let modal = $("#chatModal");
+                    modal.removeClass("show");
+                    setTimeout(() => {
+                        modal.hide();
+                    },300);
+                }
+            });
+
             //외부 클릭시 popover 닫기
             // Popover 외부 클릭 시 닫기
             $(document).on("click", function (e) {
@@ -251,7 +277,7 @@
                         <span class="timestamp">\${time}</span>
                         <div class="myContents">
                             <img src="\${imageOptimizerFrontUrl}/images/\${message.chatImage}\${imageOptimizerBackUrl}"
-                            class="chatImage" alt="\${message.chatImage}">
+                            class="chatImage" alt="\${message.chatImage}"><br>
                             \${message.content}
                         </div>
                     </div>
@@ -281,7 +307,7 @@
                         </div>
                         <div class="otherContents">
                             <img src="\${imageOptimizerFrontUrl}/images/\${message.chatImage}\${imageOptimizerBackUrl}"
-                            class="chatImage" alt="\${message.chatImage}">
+                            class="chatImage" alt="\${message.chatImage}"><br>
                             \${message.content}
                         </div>
                         <span class="timestamp">\${time}</span>
@@ -344,11 +370,17 @@
                 </c:forEach>
 
             </div>
+            <!-- 모달 -->
+            <div id="chatModal" class="chatModal">
+                <div class="modalContent">
+                    <img id="modalImage" src="" style="max-width: 100%;">
+                </div>
+            </div>
             <!-- 채팅 입력창 -->
             <form id="chatInput">
                 <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
                         tilte="이미지 미리보기">+</button>
-                <input type="file" name="chatImage" id="imageInput" hidden/>
+                <input type="file" name="chatImage" id="imageInput" accept="image/*" hidden/>
                 <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
                 <button type="submit" id="sendBtn">전송</button>
             </form>
