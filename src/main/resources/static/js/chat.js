@@ -73,6 +73,11 @@ $(function () {
                 imagePopover.show(); //popover 표시
             };
             reader.readAsDataURL(file);
+        } else { //파일 선택 취소시 popover 제거
+            if (imagePopover) {
+                imagePopover.dispose();
+                imagePopover = null;
+            }
         }
     });
 
