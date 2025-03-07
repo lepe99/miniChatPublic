@@ -189,19 +189,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         
         // 유저 리스트 전송
         sendUserList();
-        
-        // HTTP 세션 가져오기 및 무효화
-        HttpSession httpSession = (HttpSession) session.getAttributes()
-                .get(HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME);
-        if (httpSession != null) {
-            try {
-                System.out.println("HttpSession 무효화: " + httpSession.getId());
-                httpSession.invalidate();
-            } catch (IllegalStateException e) {
-                // 이미 무효화된 세션일 경우 예외 처리
-                System.err.println("HttpSession 이미 무효화됨: " + httpSession.getId());
-            }
-        }
     }
     
     // 메시지 생성

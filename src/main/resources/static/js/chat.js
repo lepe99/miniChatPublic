@@ -168,11 +168,15 @@ $(function () {
     // 웹소켓 연결, url에 세션 정보 포함하기
     let socket = new WebSocket(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
 
+    let pingTimeout;
+    const PING_INTERVAL = 30000; // 30초
+
     // 웹소켓으로부터 메세지 수신
     socket.onmessage = (event) => {
         // ping 메세지 응답
         if (event.data === "ping") {
             socket.send("pong");
+            resetPingTimeout(); // 타이머 초기화
             return;
         }
         // 수신된 메세지를 JSON으로 파싱
@@ -195,7 +199,35 @@ $(function () {
         }
     };
 
+    socket.onopen = () => { // 연결 시 타이머 시작
+        resetPingTimeout();
+    }
+
+    socket.onclose = () => { // 연결 종료 시 타이머 제거
+        clearTimeout(pingTimeout);
+    }
+
 });
+
+// ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
+function resetPingTimeout() {
+    clearTimeout(pingTimeout);
+    pingTimeout = setTimeout(() => {
+        // 세션 해제 요청 (서버에 알림)
+        $.ajax({
+            url: "/logout",
+            type: "post",
+            success: () => {
+                alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
+                location.href = '/login';
+            },
+            error: (xhr, status, error) => {
+                alert("오류 발생. 상태 코드 : " + xhr.status);
+            }
+        });
+
+    }, PING_INTERVAL * 2); // ping의 두배 간격으로 설정. 안정성을 높임.
+}
 
 // 유저 리스트 출력
 function displayUserList(userList) {
