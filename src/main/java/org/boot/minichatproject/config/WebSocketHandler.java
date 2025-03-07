@@ -3,6 +3,7 @@ package org.boot.minichatproject.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.util.Utils;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.io.IOException;
 import java.net.URI;
@@ -171,9 +173,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     // 웹소켓 연결이 닫힐 때 호출
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        // 세션 정보 먼저 가져오기, 아래 모두 동기화
+        // 세션 정보 먼저 가져오기
         Map<String, String> userInfo;
-        
         // 세션 정보 삭제
         userInfo = sessionInfo.remove(session);
         sessions.remove(session);
@@ -184,6 +185,19 @@ public class WebSocketHandler extends TextWebSocketHandler {
         if (userInfo != null) {
             Map<String, Object> message = createMessage("leave", userInfo);
             sendMessageToAll(objectMapper.writeValueAsString(message));
+        }
+        
+        // HTTP 세션 가져오기 및 무효화
+        HttpSession httpSession = (HttpSession) session.getAttributes()
+                .get(HttpSessionHandshakeInterceptor.HTTP_SESSION_ID_ATTR_NAME);
+        if (httpSession != null) {
+            try {
+                System.out.println("HttpSession 무효화: " + httpSession.getId());
+                httpSession.invalidate();
+            } catch (IllegalStateException e) {
+                // 이미 무효화된 세션일 경우 예외 처리
+                System.err.println("HttpSession 이미 무효화됨: " + httpSession.getId());
+            }
         }
         
         // 유저 리스트 전송
@@ -219,7 +233,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // sessions를 돌면서 idle 체크
         for (WebSocketSession session : sessions) {
             Long lastTime = lastMessageTime.get(session);
-            System.out.println(now - lastTime - IDLE_TIMEOUT_MS);
             
             if (lastTime == null) {
                 continue;
