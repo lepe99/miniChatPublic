@@ -17,6 +17,50 @@
     <link rel="stylesheet" href="css/chat.css">
     <script>
         $(function () {
+            let imagePopover = null;
+
+            // + 버튼 선택시 파일선택
+            $("#imageInputBtn").click(function (){
+                $("#imageInput").click();
+            });
+
+            //파일 선택시 이미지 미리보기 생성 (popover)
+            $("#imageInput").change(function (event){
+                let file= event.target.files[0];
+
+                if(file){
+                    let reader = new FileReader();
+                    reader.onload = function (e){
+                        let imageInputHtml = `
+                        <img src="\${e.target.result}" id="popoverImage">`;
+                        //기존 Popover 제거(중복방지)
+                        if(imagePopover){
+                            imagePopover.dispose();
+                            imagePopover=null;
+                        }
+
+                        //popover 생성 및 내용 업데이트
+                        $("#imageInputBtn").attr("data-bs-content",imageInputHtml);
+                        //새로초기화
+                        imagePopover = new bootstrap.Popover($("#imageInputBtn")[0],{
+                            html:true,
+                            trigger:"manual",
+                            placement:"top"
+                        });
+                        imagePopover.show(); //popover 표시
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // **바깥 클릭 시 popover 닫기**
+            $(document).on("click", function (event) {
+                // popover가 열려 있고, 클릭한 요소가 popover 내부가 아니라면 닫기
+                if (imagePopover && !$(event.target).closest("#imageInputBtn, .popover").length) {
+                    imagePopover.dispose();
+                    imagePopover = null;
+                }
+            });
 
             // 로그인 여부 확인
             let isLogin = "${sessionScope.isLogin}"; // 로그인 됐으면 true
@@ -40,7 +84,13 @@
                     content: "<button class='btn btn-danger btn-sm' onclick='location.href=\"/logout\"'>로그아웃</button>"
                 });
             });
-
+            //외부 클릭시 popover 닫기
+            // Popover 외부 클릭 시 닫기
+            $(document).on("click", function (e) {
+                if (!$(e.target).closest("#popoverBtn").length) {
+                    $("#popoverBtn").popover("hide");
+                }
+            });
 
             //버튼 클릭시 메세지 전송
             $("#sendBtn").click(function () {
@@ -74,7 +124,7 @@
                             console.log("메세지 저장 실패");
                         }
                     },
-                    error : (xhr, status, error) => {
+                    error: (xhr, status, error) => {
                         console.error("status: " + xhr.status);
                         console.error("error: " + error);
                     }
@@ -89,7 +139,6 @@
                     $("#sendBtn").click();
                 }
             });
-
 
 
             // url 에 넣을 세션 정보 받아오기
@@ -155,11 +204,12 @@
 
         // 마지막 표시 날짜 추적 위한 전역변수 선언
         let lastDisplayedDate = null;
+
         // 메세지 출력
         function displayMessage(message, timestamp = new Date()) {
             // console.log("메세지 출력");
             let date = timestamp.toLocaleDateString();
-            let time = timestamp.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+            let time = timestamp.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
 
             let messageHtml = "";
 
@@ -202,8 +252,8 @@
         }
 
         //입퇴장 메세지 출력
-        function displaySystemMessage (text){
-            let messageHtml =`
+        function displaySystemMessage(text) {
+            let messageHtml = `
             <div class="infoMessage">
                 <span>\${text}</span>
             </div>
@@ -219,7 +269,7 @@
 <div id="chatContainer">
     <div id="header">
         <span>채팅창</span>
-        <a href="#" title="Header" data-bs-toggle="popover" data-bs-placement="bottom"
+        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
            id="popoverBtn">
             <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
         </a>
@@ -248,13 +298,15 @@
 
             </div>
             <!-- 채팅 입력창 -->
-            <div id="chatInput">
-                <input type="text" id="messageInput" placeholder="메세지를 입력하세요..."/>
-                <button id="sendBtn">전송</button>
-            </div>
+                <form id="chatInput">
+                    <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
+                    tilte="이미지 미리보기">+</button>
+                    <input type="file" name="chatImage" id="imageInput" hidden/>
+                    <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
+                    <button type="submit" id="sendBtn">전송</button>
+                </form>
         </div>
     </div>
-
     <!-- bs5 toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
         <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">

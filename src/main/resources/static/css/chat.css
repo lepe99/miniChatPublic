@@ -128,7 +128,7 @@ body * {
     border-radius: 10px;
     outline: none;
 }
-#imageInput{
+#imageInputBtn{
     margin-right: 5px;
     width: 35px;
     border: none;
@@ -193,4 +193,8 @@ body * {
 .timestamp {
     font-size: 12px;
     color: lightgray;
+}
+
+#popoverImage{
+    width: 150px;
 }
