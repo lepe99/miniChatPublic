@@ -124,8 +124,12 @@ $(function () {
             data: formData,
             contentType: false,
             processData: false,
+            beforeSend: () => {
+                $("#chatInput").prop("disabled", true); // 전송 중에는 입력창 비활성화
+            },
             success: (response) => {
                 console.log("메세지 저장 성공");
+                $("#chatInput").prop("disabled", false); // 폼 활성화
 
                 // 메세지 객체 생성
                 let message = {
