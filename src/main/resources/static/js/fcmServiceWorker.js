@@ -21,7 +21,9 @@ messaging.onBackgroundMessage((payload) => {
     const notificationOptions = {
         body: payload.data.body,
         icon: payload.data.icon,
-        customImage: payload.data.icon
+        data: {
+            url: payload.data.url
+        }
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
@@ -34,6 +36,6 @@ self.addEventListener('notificationclick', (event) => {
 
     // 알림 클릭 시 수행할 작업 (예: 특정 URL 열기)
     event.waitUntil(
-        clients.openWindow(event.data.url)
+        clients.openWindow(event.notification.data.url)
     );
 });
