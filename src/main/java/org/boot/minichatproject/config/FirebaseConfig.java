@@ -29,9 +29,6 @@ public class FirebaseConfig {
                     .setProjectId("minichat-d6f16") // Firebase 콘솔에서 확인 가능한 프로젝트 ID
                     .build();
             
-            // 로그
-            System.setProperty("com.google.firebase.debug", "true");
-            
             return FirebaseApp.initializeApp(options);
         }
     }

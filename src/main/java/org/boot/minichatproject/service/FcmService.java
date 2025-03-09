@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.mapper.FcmMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,20 +20,23 @@ public class FcmService {
     public BatchResponse sendMulticastWebPush(List<String> tokens, String title, String body, String icon)
             throws FirebaseMessagingException {
         
-        // MulticastMessage 사용
-        MulticastMessage message = MulticastMessage.builder()
-                .setWebpushConfig(WebpushConfig.builder()
-                        .setNotification(WebpushNotification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .setIcon(icon)
-                                .build())
-                        .build())
-                .addAllTokens(tokens) // 모든 토큰 한번에 추가
-                .build();
+        // 개별 메시지 목록 생성
+        List<Message> messages = new ArrayList<>();
+        for (String token : tokens) {
+            messages.add(Message.builder()
+                    .setToken(token)
+                    .setWebpushConfig(WebpushConfig.builder()
+                            .setNotification(WebpushNotification.builder()
+                                    .setTitle(title)
+                                    .setBody(body)
+                                    .setIcon(icon)
+                                    .build())
+                            .build())
+                    .build());
+        }
         
-        // sendMulticast 메서드 사용
-        BatchResponse response = FirebaseMessaging.getInstance(firebaseApp).sendMulticast(message);
+        // 일괄 전송
+        BatchResponse response = FirebaseMessaging.getInstance(firebaseApp).sendAll(messages);
         
         // 응답 처리
         if (response.getFailureCount() > 0) {
