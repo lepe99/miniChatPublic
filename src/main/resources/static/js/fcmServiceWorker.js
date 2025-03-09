@@ -33,7 +33,6 @@ self.addEventListener('notificationclick', (event) => {
 
     // 알림 클릭 시 수행할 작업 (예: 특정 URL 열기)
     event.waitUntil(
-        self.openWindow('https://502chat.kro.kr')
-        // data.click_action을 url로 사용, 없을 시 기본 URL로 이동
+        clients.openWindow('https://502chat.kro.kr')
     );
 });
