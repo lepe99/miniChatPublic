@@ -29,6 +29,9 @@
         if (!isLogin) location.href = '/login';
     </script>
     <script src="js/chat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+    <script src="js/fcmSetup.js"></script>
 </head>
 <body>
 <div id="chatContainer" class="frame">
@@ -38,6 +41,9 @@
         <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
            id="popoverBtn">
             <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
+            &nbsp;
+            <i class="bi bi-bell-fill" id="subscribeBtn"></i>
+            <i class="bi bi-bell-slash-fill" id="unsubscribeBtn"></i>
         </a>
     </div>
     <div id="main">
