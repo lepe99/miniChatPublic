@@ -16,7 +16,7 @@ const messaging = firebase.messaging();
 
 // 백그라운드 메시지 핸들러
 messaging.onBackgroundMessage((payload) => {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
+    console.log('[fcmSetup.js] Received background message ', payload);
     const notificationTitle = payload.data.title;
     const notificationOptions = {
         body: payload.data.body,
@@ -31,7 +31,7 @@ messaging.onBackgroundMessage((payload) => {
 
 // 알림 클릭 이벤트 처리
 self.addEventListener('notificationclick', (event) => {
-    console.log('[firebase-messaging-sw.js] Notification clicked:', event.notification);
+    console.log('[fcmSetup.js] Notification clicked:', event.notification);
     event.notification.close();
 
     // 알림 클릭 시 수행할 작업 (예: 특정 URL 열기)

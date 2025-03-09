@@ -36,67 +36,78 @@
 <body>
 <div id="chatContainer" class="frame">
     <div class="background">
-    <div id="header">
-<%--        <span id="chatTitle">BitSync502</span>--%>
-        <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
-           id="popoverBtn">
-            <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
-            &nbsp;
-            <i class="bi bi-bell-fill" id="subscribeBtn"></i>
-            <i class="bi bi-bell-slash-fill" id="unsubscribeBtn"></i>
-        </a>
-    </div>
-    <div id="main">
-        <div id="userList">
-            <br>
-        </div>
-        <div id="chat">
-            <!-- 채팅 메세지가 표시되는 영역 -->
-            <div id="chatBox">
-                <c:forEach var="chat" items="${chatList}">
-                    <script>
-                        // java 객체 => javaScript 객체로 변환
-                        message = {
-                            nickname: "${chat.nickname}",
-                            profileImage: "${chat.profileImage}",
-                            content: "${chat.message}",
-                            chatImage: "${chat.chatImage}"
-                        };
-                        timestamp = new Date(${chat.createdAt.time});
-
-                        // 메세지 출력
-                        displayMessage(message, timestamp);
-                    </script>
-                </c:forEach>
-
+        <div id="header">
+            <%--        <span id="chatTitle">BitSync502</span>--%>
+            <a href="#" data-bs-toggle="popover" data-bs-placement="bottom"
+               id="popoverBtn">
+                <img src="${sessionScope.profileImage}" id="topImage">&nbsp;${sessionScope.nickname}님, 안녕하세요!
+            </a>
+            &nbsp;&nbsp;
+            <div id="subscribe">
+                <i class="bi bi-bell" id="subscribeBtn"></i>
+                <i class="bi bi-bell-slash-fill" id="unsubscribeBtn"></i>
             </div>
-            <!-- 모달 -->
-            <div id="chatModal" class="chatModal">
-                <div class="modalContent">
-                    <img id="modalImage" src="" style="max-width: 100%;">
+        </div>
+        <div id="main">
+            <div id="userList">
+                <br>
+            </div>
+            <div id="chat">
+                <!-- 채팅 메세지가 표시되는 영역 -->
+                <div id="chatBox">
+                    <c:forEach var="chat" items="${chatList}">
+                        <script>
+                            // java 객체 => javaScript 객체로 변환
+                            message = {
+                                nickname: "${chat.nickname}",
+                                profileImage: "${chat.profileImage}",
+                                content: "${chat.message}",
+                                chatImage: "${chat.chatImage}"
+                            };
+                            timestamp = new Date(${chat.createdAt.time});
+
+                            // 메세지 출력
+                            displayMessage(message, timestamp);
+                        </script>
+                    </c:forEach>
+
                 </div>
+                <!-- 모달 -->
+                <div id="chatModal" class="chatModal">
+                    <div class="modalContent">
+                        <img id="modalImage" src="" style="max-width: 100%;">
+                    </div>
+                </div>
+                <!-- 채팅 입력창 -->
+                <form id="chatInput">
+                    <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
+                            tilte="이미지 미리보기">+
+                    </button>
+                    <input type="file" name="chatImage" id="imageInput" accept="image/*" hidden/>
+                    <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
+                    <button type="submit" id="sendBtn">전송</button>
+                </form>
             </div>
-            <!-- 채팅 입력창 -->
-            <form id="chatInput">
-                <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
-                        tilte="이미지 미리보기">+
-                </button>
-                <input type="file" name="chatImage" id="imageInput" accept="image/*" hidden/>
-                <input type="text" name="message" id="messageInput" placeholder="메세지를 입력하세요"/>
-                <button type="submit" id="sendBtn">전송</button>
-            </form>
         </div>
     </div>
-
-    <!-- bs5 toast -->
+    <!-- bs5 toast : 채팅 입력 알림 -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
-        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+        <div id="noChatInputToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+             data-bs-delay="1500">
             <div class="toast-body">
                 채팅을 입력해주세요.
             </div>
         </div>
     </div>
-</div>
+
+    <!-- bs5 toast : 채팅 입력 알림 -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="subscribeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+             data-bs-delay="3000">
+            <div class="toast-body" id="subscribeToastBody">
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

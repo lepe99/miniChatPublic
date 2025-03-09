@@ -39,56 +39,71 @@ if ('serviceWorker' in navigator) {
 
 // 구독 버튼 클릭 핸들러
 function subscribe() {
+    $("#subscribe").addClass('disableClick') // 중복 클릭 방지
     Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
             messaging.getToken({vapidKey: 'BPCr25Fjece9BkFDk_-iOdZe8a6F4WhsizzTgEBAtLJdsZFE-rDgjJzCD7RHU8U8e5T_NL0W1oCgaYESYoE6Ce8'})
                 .then((currentToken) => {
                     if (currentToken) {
+                        // 버튼 변경
+                        $('#subscribeBtn').hide();
+                        $('#unsubscribeBtn').show();
+
                         console.log('FCM Token:', currentToken);
                         sendTokenToServer(currentToken); // 서버로 토큰 전송
-                        alert('구독되었습니다!'); // 알림 표시 (선택 사항)
+                        showSubscribeToast("채팅 알림 설정이 완료되었습니다."); // 토스트 메시지 표시
+                        $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
 
-                        //구독 상태에 따라 버튼 변경
-                        updateButtonState();
                     } else {
                         console.log('No registration token available.');
                         setTokenSentToServer(false);
+                        $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
                     }
                 }).catch((err) => {
                 console.log('An error occurred while retrieving token. ', err);
                 setTokenSentToServer(false);
+                $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
             });
         } else {
             console.log('Unable to get permission to notify.');
             alert('알림 권한이 거부되었습니다.');
+            $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
         }
     });
 }
 
 // 구독 취소 함수
 function unsubscribe() {
+    $("#subscribe").addClass('disableClick'); // 중복 클릭 방지
     messaging.getToken({vapidKey: 'BPCr25Fjece9BkFDk_-iOdZe8a6F4WhsizzTgEBAtLJdsZFE-rDgjJzCD7RHU8U8e5T_NL0W1oCgaYESYoE6Ce8'}) // VAPID
         .then((currentToken) => {
             if (currentToken) {
                 messaging.deleteToken(currentToken) // 현재 토큰 삭제
                     .then(() => {
-                        deleteToken(currentToken); // 서버에서도 토큰 삭제
-                        alert('구독이 취소되었습니다.');
 
-                        //구독 상태에 따라 버튼 변경
-                        updateButtonState();
+                        // 버튼 변경
+                        $('#subscribeBtn').show();
+                        $('#unsubscribeBtn').hide();
+
+                        deleteToken(currentToken); // 서버에서도 토큰 삭제
+                        showSubscribeToast("채팅 알림 설정이 해제되었습니다."); // 토스트 메시지 표시
+                        $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
+
                     })
                     .catch((err) => {
                         console.log('Unable to delete token. ', err);
+                        $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
                     });
             } else {
                 console.log("No token to delete");
                 setTokenSentToServer(false);
+                $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
             }
         })
         .catch((err) => {
             console.log('An error occurred while retrieving token. ', err);
+            $("#subscribe").removeClass('disableClick') // 중복 클릭 방지 해제
         });
 }
 
@@ -177,4 +192,14 @@ function updateButtonState() {
         if (subscribeBtn) subscribeBtn.style.display = 'inline-block';
         if (unsubscribeBtn) unsubscribeBtn.style.display = 'none';
     }
+}
+
+// 구독 알림 토스트
+function showSubscribeToast(text) {
+
+    // Toast 보여주기
+    var toastEl = document.getElementById('subscribeToast');
+    $("#subscribeToastBody").text(text);
+    var toast = new bootstrap.Toast(toastEl);
+    toast.show();
 }

@@ -79,7 +79,9 @@
     font-weight: 600;
     /*margin-right: 20px;*/
 }
-
+#subscribe {
+    color: rgba(255,255,255,0.7);
+}
 /* 아래 영역을 가로 배치 */
 #main {
     display: flex;
@@ -286,4 +288,9 @@
     max-width: 80%;
     max-height: 80%;
     overflow: auto;
+}
+
+.disableClick {
+    pointer-events: none;
+    opacity: 0.5; /* 선택사항: 비활성화 시 시각적 효과 */
 }
