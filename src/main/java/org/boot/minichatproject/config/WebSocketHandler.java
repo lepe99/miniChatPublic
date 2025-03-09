@@ -173,6 +173,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         
         // 메시지 전송
         sendMessageToAll(objectMapper.writeValueAsString(messageMap));
+        
+        // 푸시 알림 전송
+        sendMulticastWebPush(messageMap);
     }
     
     // 웹소켓 연결이 닫힐 때 호출
