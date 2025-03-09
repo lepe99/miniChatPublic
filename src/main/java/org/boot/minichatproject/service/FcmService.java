@@ -28,7 +28,6 @@ public class FcmService {
                                 .setBody(body)
                                 .setIcon(icon)
                                 .build())
-                        .putData("click_action", "https://502chat.kro.kr")
                         .build())
                 .build();
         
