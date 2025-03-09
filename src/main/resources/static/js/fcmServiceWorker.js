@@ -17,12 +17,12 @@ const messaging = firebase.messaging();
 // 백그라운드 메시지 핸들러
 messaging.onBackgroundMessage((payload) => {
     console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    const notificationTitle = payload.notification.title;
+    const notificationTitle = payload.data.title;
     const notificationOptions = {
-        body: payload.notification.body,
-        icon: payload.notification.icon,
+        body: payload.data.body,
+        icon: payload.data.icon,
         data: {
-            url: 'https://502chat.kro.kr'
+            url: payload.data.url
         }
     };
 

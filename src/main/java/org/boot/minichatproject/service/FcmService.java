@@ -22,13 +22,10 @@ public class FcmService {
         // 멀티캐스트 메시지 생성
         MulticastMessage multicastMessage = MulticastMessage.builder()
                 .addAllTokens(tokens)
-                .setWebpushConfig(WebpushConfig.builder()
-                        .setNotification(WebpushNotification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .setIcon(icon)
-                                .build())
-                        .build())
+                .putData("title", title)
+                .putData("body", body)
+                .putData("icon", icon)
+                .putData("url", "https://502chat.kro.kr")
                 .build();
         
         // sendEachForMulticast 메서드 사용
