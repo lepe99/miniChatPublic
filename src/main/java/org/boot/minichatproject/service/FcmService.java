@@ -17,18 +17,20 @@ public class FcmService {
     private final FcmMapper fcmMapper;
     
     // 여러 사용자에게 푸시 알림 보내기
-    // 여러 사용자에게 푸시 알림 보내기 (v1 API 사용)
     public BatchResponse sendMulticastWebPush(List<String> tokens, String title, String body, String icon)
             throws FirebaseMessagingException {
         
-        // 1. Message 리스트 생성 (v1 API 방식)
+        // 1. Message 리스트 생성 (빌더 패턴 사용)
         List<Message> messages = tokens.stream()
                 .map(token -> Message.builder()
                         .setWebpushConfig(WebpushConfig.builder()
-                                .setNotification(new WebpushNotification(title, body, icon))
-                                // 필요한 경우 FcmOptions, data, headers 등 추가 설정
+                                .setNotification(WebpushNotification.builder()
+                                        .setTitle(title)
+                                        .setBody(body)
+                                        .setIcon(icon)
+                                        .build())
                                 .build())
-                        .setToken(token) // 각 메시지에 토큰 설정
+                        .setToken(token)
                         .build())
                 .collect(Collectors.toList());
         
@@ -40,7 +42,6 @@ public class FcmService {
             List<SendResponse> responses = response.getResponses();
             for (int i = 0; i < responses.size(); i++) {
                 if (!responses.get(i).isSuccessful()) {
-                    // 실패한 메시지에 대한 정보 로깅.  어떤 토큰에 대한 메시지가 실패했는지 알 수 있음.
                     System.err.println(
                             "Failed to send message to token: " + tokens.get(i) +
                                     ". Error: " + responses.get(i).getException().getMessage()

@@ -15,10 +15,13 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
     
+    @Value("${firebase.config.path}")
+    private String firebaseConfigPath;
+    
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         // ClassPathResource를 사용하여 클래스패스에서 리소스 로드
-        ClassPathResource serviceAccount = new ClassPathResource("firebase/minichat-d6f16-firebase-adminsdk-fbsvc-3630a1908d.json");
+        ClassPathResource serviceAccount = new ClassPathResource(firebaseConfigPath);
         
         // InputStream으로 열기
         try (InputStream inputStream = serviceAccount.getInputStream()) {

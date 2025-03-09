@@ -259,8 +259,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String content = (String) messageMap.get("content");
             String profileImage = (String) messageMap.get("profileImage");
             
-            System.out.println(nickname + content + profileImage);
-            
             // 푸시 알림 내용 설정
             String title = "502 : " + nickname;
             String body;
