@@ -260,7 +260,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             String profileImage = (String) messageMap.get("profileImage");
             
             // 푸시 알림 내용 설정
-            String title = "502 : " + nickname;
+            String title = nickname;
             String body;
             if (content.length() > 20) {
                 body = content.substring(0, 20) + "...";
@@ -269,9 +269,11 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else {
                 body = content;
             }
-            String icon = profileImage;
+            String customImage = profileImage;
             
-            BatchResponse response = fcmService.sendMulticastWebPush(tokens, title, body, icon);
+            
+            
+            BatchResponse response = fcmService.sendMulticastWebPush(tokens, title, body, customImage);
             
             // 성공/실패 결과 처리 (예시)
             String result = String.format("Successfully sent %d messages. Failed to send %d messages.",

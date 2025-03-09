@@ -16,7 +16,7 @@ public class FcmService {
     private final FcmMapper fcmMapper;
     
     // 여러 사용자에게 푸시 알림 보내기
-    public BatchResponse sendMulticastWebPush(List<String> tokens, String title, String body, String icon)
+    public BatchResponse sendMulticastWebPush(List<String> tokens, String title, String body, String customImage)
             throws FirebaseMessagingException {
         
         // 멀티캐스트 메시지 생성
@@ -26,8 +26,9 @@ public class FcmService {
                         .setNotification(WebpushNotification.builder()
                                 .setTitle(title)
                                 .setBody(body)
-                                .setIcon(icon)
                                 .build())
+                        .putData("customImage", customImage)
+                        .putData("click_action", "https://502chat.kro.kr")
                         .build())
                 .build();
         
