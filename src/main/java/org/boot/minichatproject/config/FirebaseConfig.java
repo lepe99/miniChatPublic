@@ -13,14 +13,11 @@ import java.io.IOException;
 @Configuration
 public class FirebaseConfig {
     
-    @Value("${firebase.credentials.path}")
-    private String firebaseCredentialsPath;
-    
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         FileInputStream serviceAccount =
                 // 서비스 계정 키 파일 경로
-                new FileInputStream(firebaseCredentialsPath);
+                new FileInputStream("src/main/resources/firebase/minichat-d6f16-firebase-adminsdk-fbsvc-3630a1908d.json");
         
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
