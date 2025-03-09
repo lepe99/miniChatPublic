@@ -269,11 +269,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             } else {
                 body = content;
             }
-            String customImage = profileImage;
+            String icon = profileImage;
             
-            
-            
-            BatchResponse response = fcmService.sendMulticastWebPush(tokens, title, body, customImage);
+            BatchResponse response = fcmService.sendMulticastWebPush(tokens, title, body, icon);
             
             // 성공/실패 결과 처리 (예시)
             String result = String.format("Successfully sent %d messages. Failed to send %d messages.",
