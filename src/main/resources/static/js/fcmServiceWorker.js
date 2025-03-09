@@ -21,22 +21,19 @@ messaging.onBackgroundMessage((payload) => {
     const notificationOptions = {
         body: payload.data.body,
         icon: payload.data.icon,
-        data: {
-            url: payload.data.url,
-            customImage: payload.data.icon
-        }
+        customImage: payload.data.icon,
     };
 
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
 // 알림 클릭 이벤트 처리
-// self.addEventListener('notificationclick', (event) => {
-//     console.log('[firebase-messaging-sw.js] Notification clicked:', event.notification);
-//     event.notification.close();
-//
-//     // 알림 클릭 시 수행할 작업 (예: 특정 URL 열기)
-//     event.waitUntil(
-//         clients.openWindow('https://502chat.kro.kr')
-//     );
-// });
+self.addEventListener('notificationclick', (event) => {
+    console.log('[firebase-messaging-sw.js] Notification clicked:', event.notification);
+    event.notification.close();
+
+    // 알림 클릭 시 수행할 작업 (예: 특정 URL 열기)
+    event.waitUntil(
+        clients.openWindow(event.data.url)
+    );
+});
