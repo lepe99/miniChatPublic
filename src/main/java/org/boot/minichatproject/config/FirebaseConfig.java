@@ -24,6 +24,7 @@ public class FirebaseConfig {
         try (InputStream inputStream = serviceAccount.getInputStream()) {
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(inputStream))
+                    .setProjectId("minichat-d6f16") // Firebase 콘솔에서 확인 가능한 프로젝트 ID
                     .build();
             
             return FirebaseApp.initializeApp(options);
