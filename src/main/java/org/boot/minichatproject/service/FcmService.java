@@ -20,24 +20,22 @@ public class FcmService {
     public BatchResponse sendMulticastWebPush(List<String> tokens, String title, String body, String icon)
             throws FirebaseMessagingException {
         
-        // 1. Message 리스트 생성 (빌더 패턴 사용)
-        List<Message> messages = tokens.stream()
-                .map(token -> Message.builder()
-                        .setWebpushConfig(WebpushConfig.builder()
-                                .setNotification(WebpushNotification.builder()
-                                        .setTitle(title)
-                                        .setBody(body)
-                                        .setIcon(icon)
-                                        .build())
+        // MulticastMessage 사용
+        MulticastMessage message = MulticastMessage.builder()
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setNotification(WebpushNotification.builder()
+                                .setTitle(title)
+                                .setBody(body)
+                                .setIcon(icon)
                                 .build())
-                        .setToken(token)
                         .build())
-                .collect(Collectors.toList());
+                .addAllTokens(tokens) // 모든 토큰 한번에 추가
+                .build();
         
-        // 2. sendAll()을 사용하여 메시지 전송
-        BatchResponse response = FirebaseMessaging.getInstance(firebaseApp).sendAll(messages);
+        // sendMulticast 메서드 사용
+        BatchResponse response = FirebaseMessaging.getInstance(firebaseApp).sendMulticast(message);
         
-        // 3. 응답 처리 (성공/실패 로그)
+        // 응답 처리
         if (response.getFailureCount() > 0) {
             List<SendResponse> responses = response.getResponses();
             for (int i = 0; i < responses.size(); i++) {
