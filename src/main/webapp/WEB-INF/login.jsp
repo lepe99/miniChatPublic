@@ -38,7 +38,7 @@
         <div class="loginwindow">
             <img src="../img/moon.png" class="sunimg"><br>
             <span id="welcome">Welcome!</span><br>
-            <span id="bitsync">we are "BitSync 501"</span><br><br>
+            <span id="bitsync">we are "BitSync 502"</span><br><br>
             <span id="logintext">please login</span><br>
             <img src="../img/kakao_login_medium_narrow.png" class="loginbtn" onclick="loginWithKakao()">
 <%--            <button class="loginbtn" onclick="loginWithKakao()"><img src="">카카오톡 로그인</button>--%>

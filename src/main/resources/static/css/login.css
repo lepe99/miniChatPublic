@@ -13,7 +13,7 @@
 /*    color: white;*/
 /*}*/
 body * {
-    font-family: sandoll-gothicneo1, sans-serif;
+    font-family: "sandoll-gothicneo2", sans-serif;
 }
 
 .loginbtn{
@@ -36,6 +36,7 @@ body * {
 #bitsync{
     font-size: 25px;
     color: rgba(255,255,255,0.8);
+
 }
 #logintext{
     font-size: 15px;
