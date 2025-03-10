@@ -26,11 +26,11 @@ $(function () {
         if (message.type === "enter") {
             // 입장 메세지 처리
             let userInfo = message.userInfo;
-            displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다");
+            displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
         } else if (message.type === "leave") {
             // 퇴장 메세지 처리
             let userInfo = message.userInfo;
-            displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다");
+            displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
         } else if (message.type === "userList") {
             // 유저 리스트 처리
             displayUserList(message.userList);
