@@ -12,7 +12,9 @@
 /*    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1); !* 그림자 추가 *!*/
 /*    color: white;*/
 /*}*/
-
+body * {
+    font-family: sandoll-gothicneo1, sans-serif;
+}
 
 .loginbtn{
     margin-top: 10px;

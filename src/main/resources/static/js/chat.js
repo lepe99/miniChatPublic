@@ -234,7 +234,7 @@ function displayUserList(userList) {
     });
 
     // 인원수 표시
-    userListHtml += `인원수 : ${uniqueUserList.size}명<hr>`;
+    userListHtml += `<div id="inwon">인원수 : ${uniqueUserList.size}명</div><br>`;
 
     // 중복 제거된 유저 리스트로 다시 변환
     uniqueUserList.values().forEach(user => {
