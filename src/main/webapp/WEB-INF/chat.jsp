@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>502jsp study</title>
+    <title>BitSync 502</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Gaegu&family=Jua&family=Nanum+Pen+Script&family=Playwrite+AU+SA:wght@100..400&family=Single+Day&display=swap"
           rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -54,8 +54,8 @@
             </a>
             &nbsp;&nbsp;
             <div id="subscribe">
-                <i class="bi bi-bell" id="subscribeBtn"></i>
-                <i class="bi bi-bell-slash-fill" id="unsubscribeBtn"></i>
+                <i class="bi bi-bell-slash" id="subscribeBtn"></i>
+                <i class="bi bi-bell-fill" id="unsubscribeBtn"></i>
             </div>
         </div>
         <div id="main">
@@ -82,12 +82,7 @@
                     </c:forEach>
 
                 </div>
-                <!-- 모달 -->
-                <div id="chatModal" class="chatModal">
-                    <div class="modalContent">
-                        <img id="modalImage" src="" style="max-width: 100%;">
-                    </div>
-                </div>
+
                 <!-- 채팅 입력창 -->
                 <form id="chatInput">
                     <button type="button" id="imageInputBtn" data-bs-toggle="popover" data-bs-placement="top"
@@ -100,6 +95,14 @@
             </div>
         </div>
     </div>
+
+    <!-- 모달 -->
+    <div id="chatModal" class="chatModal">
+        <div class="modalContent">
+            <img id="modalImage" src="" style="max-width: 100%;">
+        </div>
+    </div>
+
     <!-- bs5 toast : 채팅 입력 알림 -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
         <div id="noChatInputToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
