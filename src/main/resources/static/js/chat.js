@@ -234,7 +234,7 @@ function displayUserList(userList) {
     });
 
     // 인원수 표시
-    userListHtml += `인원수 : ${uniqueUserList.size}명<hr>`;
+    userListHtml += `<div id="inwon">인원수 : ${uniqueUserList.size}명</div><br>`;
 
     // 중복 제거된 유저 리스트로 다시 변환
     uniqueUserList.values().forEach(user => {
@@ -302,10 +302,12 @@ function displayMessage(message, timestamp = new Date()) {
                             <img src="${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">${message.nickname}</span>
                         </div>
+                        <div class="timeContents">
                         <div class="otherContents">
                             ${message.content}
                         </div>
                         <span class="timestamp otherTimestamp">${time}</span>
+                        </div>
                     </div>
                     `;
         } else {
@@ -315,12 +317,14 @@ function displayMessage(message, timestamp = new Date()) {
                             <img src="${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">${message.nickname}</span>
                         </div>
+                        <div class="timeContents">
                         <div class="otherContents">
                             <img src="${imageOptimizerFrontUrl}/images/${message.chatImage}${imageOptimizerBackUrl}"
                             class="chatImage" alt="${message.chatImage}"><br>
                             ${message.content}
                         </div>
                         <span class="timestamp otherTimestamp">${time}</span>
+                        </div>
                     </div>
                     `;
         }

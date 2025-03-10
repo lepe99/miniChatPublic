@@ -1,14 +1,19 @@
+body * {
+    font-family: sandoll-gothicneo1, sans-serif;
+    font-weight: 200;
+}
 
 #topImage {
     width: 35px;
     height: 35px;
     border-radius: 20px;
+    margin-right: 8px;
 }
 
 .userProfileImage {
     width: 35px;
     height: 35px;
-    margin-right: 10px;
+    margin-right: 8px;
     border-radius: 20px;
 }
 
@@ -17,10 +22,24 @@
     height: 30px;
     border-radius: 15px;
     margin-right: 3px;
-}
 
+}
+.nickname{
+    font-size: 13px;
+}
 .profile{
     margin-bottom: 15px;
+}
+#inwon{
+    background: rgba(0,0,0,0.3);
+    width: 100px;
+    height: 28px;
+    align-self: center;
+    /*text-align: center;*/
+    line-height: 28px;
+    font-size: 12px;
+    border-radius: 20px;
+    font-weight: 200;
 }
 
 /* 왼쪽 유저 목록 */
@@ -36,6 +55,7 @@
     flex-direction: column; /* 내부 요소를 세로 정렬 */
     /*box-shadow: 3px 3px 5px rgba(0,0,0,0.3);*/
     overflow-y: auto; /* 스크롤 가능하도록 */
+    font-size: 14px;
 }
 /* Chrome, Edge, Safari에서 적용 */
 #userList::-webkit-scrollbar {
@@ -64,6 +84,7 @@
     padding: 20px;
     /*align-self: flex-end;*/
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    font-size: 14px;
 }
 /*#chatTitle{*/
 /*    margin-left: 15px;*/
@@ -76,7 +97,7 @@
     cursor: pointer;
     text-decoration: none;
     color: rgba(255,255,255,0.7);
-    font-weight: 600;
+    font-weight: 300;
     /*margin-right: 20px;*/
 }
 #subscribe {
@@ -105,6 +126,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: normal;
     border-radius: 20px;
     padding: 10px;
     margin: 10px;
@@ -138,6 +160,10 @@
     padding-top: 8px;
 }
 
+#chatImage{
+    max-width: 200px;
+}
+
 #chatInput input {
     flex: 1;
     border: 1px solid rgba(0,0,0,0.1);
@@ -146,6 +172,7 @@
     background-color: rgba(255, 255, 255, 0.3);
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
 }
+
 #imageInputBtn{
     margin-right: 5px;
     width: 35px;
@@ -153,8 +180,16 @@
     background-color: rgba(255, 255, 255, 0.3);
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     border-radius: 10px;
-    color: #253717;
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
+}
+#messageInput {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+    font-weight: 300;
+}
+#chatInput input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
 }
 
 #sendBtn {
@@ -164,14 +199,15 @@
     background-color: rgba(255, 255, 255, 0.3);
     box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
     border-radius: 10px;
-    color: #253717;
+    color: rgba(255, 255, 255, 0.8);
     cursor: pointer;
 }
 .myMessage{
     display: flex;
     flex-direction: row;  /* row 방향 유지 */
     justify-content: flex-end; /* 내부 요소들을 오른쪽 정렬 */
-    align-items: flex-end; /* 세로 방향 정렬 (선택사항) */
+    align-items: flex-end;
+    font-size: 14px;
 }
 .myContents {
     justify-content: flex-end;
@@ -183,7 +219,7 @@
     max-width: 60%;
     align-self: flex-end;
     margin-bottom: 15px;
-    font-size: 16px;
+    font-size: 14px;
     word-wrap: break-word;
     overflow-wrap: break-word;
     white-space: normal;
@@ -191,14 +227,16 @@
 }
 .otherMessage{
     display: flex;
-    flex-direction: row;  /* row 방향 유지 */
-    align-items: flex-end; /* 세로 방향 정렬 (선택사항) */
+    flex-direction: column; /* 세로 정렬 */
+    align-items: flex-start; /* 왼쪽 정렬 */
+    /*gap: 5px; !* 프로필과 말풍선 사이 간격 *!*/
+    font-size: 14px;
 }
 
 .otherContents {
     justify-content: flex-start;
     background-color: rgba(255, 255, 255, 0.7);;
-    font-size: 16px;
+    font-size: 14px;
     padding: 8px;
     color: #232323;
     border-radius: 10px;
@@ -211,17 +249,20 @@
     overflow-wrap: break-word;
     white-space: normal;
     margin-right: 5px;
+    text-align: left !important;
 }
+
 .date{
     text-align: center;
     color: #494949;
     font-size: 14px;
     margin: 5px 0;
 }
-.nickname{
+.otherChatProfile{
     font-weight: 500;
     color: rgba(255,255,255,0.7);
     font-size: 15px;
+    /*display: block;*/
 }
 .infoMessage {
     display: inline-block;
@@ -238,6 +279,11 @@
     max-width: 60%;
     min-width: fit-content;
 }
+.timeContents{
+    display: flex;
+    /*flex-direction: row;*/
+    align-self: flex-start;
+}
 
 .timestamp {
     font-size: 12px;
@@ -248,8 +294,7 @@
     top: -15px;
 }
 .otherTimestamp{
-    position: relative;
-    top: -15px;
+    display: flex;
 }
 
 #popoverImage{
@@ -264,7 +309,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-
     align-items: center;
     justify-content: center;
     opacity: 0;

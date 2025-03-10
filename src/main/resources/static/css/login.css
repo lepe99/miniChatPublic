@@ -12,7 +12,9 @@
 /*    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1); !* 그림자 추가 *!*/
 /*    color: white;*/
 /*}*/
-
+body * {
+    font-family: sandoll-gothicneo1, sans-serif;
+}
 
 .loginbtn{
     margin-top: 10px;
@@ -28,6 +30,7 @@
 #welcome{
     font-size: 50px;
     color: rgba(255,255,255,0.8);
+    font-family: "halcom", sans-serif;
 }
 
 #bitsync{
