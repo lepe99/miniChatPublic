@@ -1,11 +1,18 @@
 package org.boot.minichatproject.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
+import org.boot.minichatproject.service.FcmService;
 import org.boot.minichatproject.util.Utils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -24,6 +31,8 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ObjectMapper objectMapper;
     // 유틸리티 클래스
     private final Utils utils;
+    // FcmService
+    private final FcmService fcmService;
     
     // 동시성 문제 해결 위해 ConcurrentHashMap 사용
     // 웹소켓 세션을 저장할 set
@@ -35,7 +44,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private final Map<WebSocketSession, Long> lastMessageTime = new ConcurrentHashMap<>();
     private static final long HEARTBEAT_INTERVAL_MS = 30000; // 30초마다 heartbeat
-    private static final long IDLE_TIMEOUT_MS = 60000; // 60초 동안 메시지 없으면 연결 종료
+    private static final long IDLE_TIMEOUT_MS = 6000000; // 600초 (10분) 동안 메시지 없으면 연결 종료
     
     // 메세지 큐 사용위한 큐
     private final BlockingQueue<TextMessage> messageQueue = new LinkedBlockingQueue<>();
@@ -155,8 +164,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // lastMessageTime 업데이트, 동기화
         lastMessageTime.put(session, Instant.now().toEpochMilli());
         
-
-        
         // getPayload(): 메시지 내용을 문자열로 반환
         Map<String, Object> messageMap = objectMapper.readValue(message.getPayload(), Map.class);
         
@@ -166,6 +173,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
         
         // 메시지 전송
         sendMessageToAll(objectMapper.writeValueAsString(messageMap));
+        
+        // 푸시 알림 전송
+        sendMulticastWebPush(messageMap);
     }
     
     // 웹소켓 연결이 닫힐 때 호출
@@ -238,6 +248,42 @@ public class WebSocketHandler extends TextWebSocketHandler {
                     System.err.println("세션 종료 중 오류 발생: " + e.getMessage());
                 }
             }
+        }
+    }
+    
+    // 여러 사용자에게 푸시 알림 보내기
+    public void sendMulticastWebPush(@RequestBody Map<String, Object> messageMap) {
+        try {
+            List<String> tokens = fcmService.selectTokens();
+            String nickname = (String) messageMap.get("nickname");
+            String content = (String) messageMap.get("content");
+            String profileImage = (String) messageMap.get("profileImage");
+            
+            // 푸시 알림 내용 설정
+            String title = nickname;
+            String body;
+            if (content.length() > 20) {
+                body = content.substring(0, 20) + "...";
+            } else if (content.length() == 0) {
+                body = "사진";
+            } else {
+                body = content;
+            }
+            String icon = profileImage;
+            
+            BatchResponse response = fcmService.sendMulticastWebPush(tokens, title, body, icon);
+            
+            // 성공/실패 결과 처리 (예시)
+            String result = String.format("Successfully sent %d messages. Failed to send %d messages.",
+                    response.getSuccessCount(), response.getFailureCount());
+            System.out.println(result);
+            
+        } catch (FirebaseMessagingException e) {
+            System.out.println("Error sending multicast web push: " + e.getMessage());
+        } catch (ClassCastException e) { // 입력값 타입 오류
+            System.out.println("Invalid input format." + e.getMessage());
+        } catch(Exception e){
+            System.out.println("UnExpected Error" + e.getMessage());
         }
     }
 }

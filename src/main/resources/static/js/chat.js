@@ -1,5 +1,50 @@
 $(function () {
 
+    // url 에 넣을 세션 정보 받아오기
+    const nickname = encodeURIComponent(`${window.nickname}`);
+    const profileImage = encodeURIComponent(`${window.profileImage}`);
+    const host = window.location.host;
+    let socketUrl;
+    // 웹소켓 연결, url에 세션 정보 포함하기
+    if (host.startsWith("localhost")) {
+        socketUrl = `ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
+    } else {
+        socketUrl = `wss://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`;
+    }
+    let socket = new WebSocket(socketUrl);
+
+    // 웹소켓으로부터 메세지 수신
+    socket.onmessage = (event) => {
+        // ping 메세지 응답
+        if (event.data === "ping") {
+            socket.send("pong");
+            return;
+        }
+        // 수신된 메세지를 JSON으로 파싱
+        let message = JSON.parse(event.data);
+
+        if (message.type === "enter") {
+            // 입장 메세지 처리
+            let userInfo = message.userInfo;
+            displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
+        } else if (message.type === "leave") {
+            // 퇴장 메세지 처리
+            let userInfo = message.userInfo;
+            displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
+        } else if (message.type === "userList") {
+            // 유저 리스트 처리
+            displayUserList(message.userList);
+        } else {
+            // 일반 메세지 처리
+            displayMessage(message);
+        }
+    };
+
+    socket.onclose = () => { // 종료 시 메세지 출력
+        alert("장시간 입력이 없어 채팅방을 나갑니다.");
+        location.href = "/logout";
+    }
+
     let imagePopover = null;
 
     // + 버튼 선택시 파일선택
@@ -33,15 +78,24 @@ $(function () {
                 imagePopover.show(); //popover 표시
             };
             reader.readAsDataURL(file);
+        } else if (file === undefined) {
+            //파일 선택 취소시 popover 제거
+            if (imagePopover) {
+                imagePopover.dispose();
+                imagePopover = null;
+            }
         }
     });
 
     // **바깥 클릭 시 popover 닫기**
     $(document).on("click", function (event) {
         // popover가 열려 있고, 클릭한 요소가 popover 내부가 아니라면 닫기
-        if (imagePopover && !$(event.target).closest("#imageInputBtn, .popover").length) {
+        if (imagePopover && !$(event.target).closest("#chatInput, .popover").length) {
             imagePopover.dispose();
             imagePopover = null;
+
+            // 파일 선택 초기화
+            $("#imageInput").val("");
         }
     });
 
@@ -104,7 +158,6 @@ $(function () {
         let messageInput = $("#messageInput");
         let imageInput = $("#imageInput");
 
-
         // messageInput 이 비어있으면 전송하지 않음
         if (messageInput.val().trim() === "" && imageInput.val().trim() === "") {
             // Toast 보여주기
@@ -125,6 +178,11 @@ $(function () {
         messageInput.val("");
         imageInput.val("");
 
+        // popover 닫기
+        if (imagePopover) {
+            imagePopover.dispose();
+            imagePopover = null;
+        }
 
         // db에 저장
         $.ajax({
@@ -160,72 +218,6 @@ $(function () {
         });
 
     });
-
-    // url 에 넣을 세션 정보 받아오기
-    const nickname = encodeURIComponent(`${window.nickname}`);
-    const profileImage = encodeURIComponent(`${window.profileImage}`);
-    const host = window.location.host;
-    // 웹소켓 연결, url에 세션 정보 포함하기
-    let socket = new WebSocket(`ws://${host}/chat?nickname=${nickname}&profileImage=${profileImage}`);
-
-    let pingTimeout;
-    const PING_INTERVAL = 30000; // 30초
-
-    // 웹소켓으로부터 메세지 수신
-    socket.onmessage = (event) => {
-        // ping 메세지 응답
-        if (event.data === "ping") {
-            socket.send("pong");
-            resetPingTimeout(); // 타이머 초기화
-            return;
-        }
-        // 수신된 메세지를 JSON으로 파싱
-        let message = JSON.parse(event.data);
-
-        if (message.type === "enter") {
-            // 입장 메세지 처리
-            let userInfo = message.userInfo;
-            displaySystemMessage(userInfo.nickname + "님이 입장하셨습니다.");
-        } else if (message.type === "leave") {
-            // 퇴장 메세지 처리
-            let userInfo = message.userInfo;
-            displaySystemMessage(userInfo.nickname + "님이 퇴장하셨습니다.");
-        } else if (message.type === "userList") {
-            // 유저 리스트 처리
-            displayUserList(message.userList);
-        } else {
-            // 일반 메세지 처리
-            displayMessage(message);
-        }
-    };
-
-    socket.onopen = () => { // 연결 시 타이머 시작
-        resetPingTimeout();
-    }
-
-    socket.onclose = () => { // 연결 종료 시 타이머 제거
-        clearTimeout(pingTimeout);
-    }
-
-    // ping 메세지 전송 받을 시 타이머 초기화 / 받지 못할 시 세션 해제
-    function resetPingTimeout() {
-        clearTimeout(pingTimeout);
-        pingTimeout = setTimeout(() => {
-            // 세션 해제 요청 (서버에 알림)
-            $.ajax({
-                url: "/logout",
-                type: "post",
-                success: () => {
-                    alert("세션이 만료되었습니다. 로그인 페이지로 이동합니다.");
-                    location.href = '/login';
-                },
-                error: (xhr, status, error) => {
-                    alert("오류 발생. 상태 코드 : " + xhr.status);
-                }
-            });
-
-        }, PING_INTERVAL * 2); // ping의 두배 간격으로 설정. 안정성을 높임.
-    }
 });
 
 // 유저 리스트 출력
