@@ -124,6 +124,7 @@ body * {
     flex: 1;
     display: flex;
     flex-direction: column;
+    align-items: normal;
     border-radius: 20px;
     padding: 10px;
     margin: 10px;
@@ -155,6 +156,10 @@ body * {
     display: flex;
     height: 50px;
     padding-top: 8px;
+}
+
+#chatImage{
+    max-width: 200px;
 }
 
 #chatInput input {
@@ -227,13 +232,13 @@ body * {
 }
 
 .otherContents {
-    /*justify-content: flex-start;*/
+    justify-content: flex-start;
     background-color: rgba(255, 255, 255, 0.7);;
     font-size: 14px;
     padding: 8px;
     color: #232323;
     border-radius: 10px;
-    /*align-self: flex-start;*/
+    align-self: flex-start;
     max-width: 60%;
     display: inline-block;
     margin-bottom: 15px;
@@ -242,7 +247,7 @@ body * {
     overflow-wrap: break-word;
     white-space: normal;
     margin-right: 5px;
-    font-weight: 300;
+    text-align: left !important;
 }
 
 .date{
@@ -272,6 +277,11 @@ body * {
     max-width: 60%;
     min-width: fit-content;
 }
+.timeContents{
+    display: flex;
+    /*flex-direction: row;*/
+    align-self: flex-start;
+}
 
 .timestamp {
     font-size: 12px;
@@ -282,9 +292,7 @@ body * {
     top: -15px;
 }
 .otherTimestamp{
-    position: relative;
-    top: -15px;
-
+    display: flex;
 }
 
 #popoverImage{
@@ -299,7 +307,6 @@ body * {
     left: 0;
     width: 100%;
     height: 100%;
-
     align-items: center;
     justify-content: center;
     opacity: 0;

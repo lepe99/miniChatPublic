@@ -302,10 +302,12 @@ function displayMessage(message, timestamp = new Date()) {
                             <img src="${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">${message.nickname}</span>
                         </div>
+                        <div class="timeContents">
                         <div class="otherContents">
                             ${message.content}
                         </div>
                         <span class="timestamp otherTimestamp">${time}</span>
+                        </div>
                     </div>
                     `;
         } else {
@@ -315,12 +317,14 @@ function displayMessage(message, timestamp = new Date()) {
                             <img src="${message.profileImage}" class="chatProfileImage">
                             <span class="nickname">${message.nickname}</span>
                         </div>
+                        <div class="timeContents">
                         <div class="otherContents">
                             <img src="${imageOptimizerFrontUrl}/images/${message.chatImage}${imageOptimizerBackUrl}"
                             class="chatImage" alt="${message.chatImage}"><br>
                             ${message.content}
                         </div>
                         <span class="timestamp otherTimestamp">${time}</span>
+                        </div>
                     </div>
                     `;
         }
