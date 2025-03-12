@@ -8,11 +8,8 @@ import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import org.boot.minichatproject.service.FcmService;
 import org.boot.minichatproject.util.Utils;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -35,7 +32,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
     private final FcmService fcmService;
     
     // 동시성 문제 해결 위해 ConcurrentHashMap 사용
-    // 웹소켓 세션을 저장할 set
+    // 웹소켓 세션을 저장할 List
     private List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     // 세션과 사용자 정보를 매핑할 맵
     private Map<WebSocketSession, Map<String, String>> sessionInfo = new ConcurrentHashMap<>();
@@ -128,6 +125,9 @@ public class WebSocketHandler extends TextWebSocketHandler {
             }
         }
         
+        // 유저 리스트 전송
+        sendUserList();
+        
         lastMessageTime.put(session, Instant.now().toEpochMilli());
         
         // 주기적으로 heartbeat 전송
@@ -148,9 +148,6 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 주기적으로 연결 상태 확인 및 idle 타임아웃 체크
         // 10초마다 체크
         executorService.scheduleAtFixedRate(this::checkIdleSessions, 0, 10, TimeUnit.SECONDS);
-        
-        // 유저 리스트 전송
-        sendUserList();
     }
     
     // 메세지 처리
@@ -174,8 +171,14 @@ public class WebSocketHandler extends TextWebSocketHandler {
         // 메시지 전송
         sendMessageToAll(objectMapper.writeValueAsString(messageMap));
         
-        // 푸시 알림 전송
-        sendMulticastWebPush(messageMap);
+        // 푸시 알림은 비동기로 처리
+        CompletableFuture.runAsync(() -> {
+            try {
+                sendMulticastWebPush(messageMap);
+            } catch (Exception e) {
+                System.err.println("푸시 알림 전송 중 오류: {}" + e.getMessage());
+            }
+        });
     }
     
     // 웹소켓 연결이 닫힐 때 호출
