@@ -34,7 +34,7 @@ build/
 
 
 ### application.yml ###
-application.yml
+src/main/resources/application.yml
 
 ### firebase ###
 src/main/resources/firebase/*.json
