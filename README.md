@@ -24,7 +24,7 @@
 
 <div align="center">
 
-<img src="/introduce/files/project.png" alt="project">
+
 
 </div>
 
@@ -37,7 +37,7 @@
 
 ## 🔍 시스템 구성도
 
-![시스템 구성도](시스템_구성도_이미지_URL)
+![시스템 구성도](<img src="/introduce/files/project.png" alt="project">)
 
 - **빌드 및 배포**:
   - Maven을 사용하여 WAR로 빌드
