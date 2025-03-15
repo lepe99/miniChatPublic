@@ -8,6 +8,10 @@
 
 </div>
 
+## 추가 자료
+[프로젝트 문서 보기](https://drive.google.com/file/d/1koVwf8wJQTUOqyvNhyVFC1d-oxWLYvj4/view?usp=sharing)
+[프로젝트 ppt 보기](https://drive.google.com/file/d/YOUR_FILE_ID/view)
+
 ## 📝 프로젝트 개요
 
 비트캠프 네이버클라우드 17기 과정 중에 과제로 수행한 2인 협업 프로젝트입니다. 12주의 교육과정 이후 주어진 두 번째 프로젝트 과제이며, 첫 번째 협업 과제입니다.
