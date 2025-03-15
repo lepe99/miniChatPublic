@@ -24,7 +24,7 @@
 
 <div align="center">
 
-
+<img src="https://firebasestorage.googleapis.com/v0/b/stackticon-81399.appspot.com/o/images%2F1741810530141?alt=media&token=9d3fe613-657b-4597-8ff3-d04839778468" alt="스택">
 
 </div>
 
@@ -37,7 +37,7 @@
 
 ## 🔍 시스템 구성도
 
-![시스템 구성도](<img src="/introduce/files/project.png" alt="project">)
+<img src="/introduce/files/project.png" alt="시스템 구성도">
 
 - **빌드 및 배포**:
   - Maven을 사용하여 WAR로 빌드
