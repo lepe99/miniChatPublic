@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### application.yml ###
+application.yml
+
+### firebase ###
+src/main/resources/firebase/*.json
