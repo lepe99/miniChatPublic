@@ -10,7 +10,7 @@
 
 ## 🌎 추가 자료
 - [프로젝트 문서 보기](https://drive.google.com/file/d/1koVwf8wJQTUOqyvNhyVFC1d-oxWLYvj4/view?usp=sharing)
-- [프로젝트 ppt 보기](https://drive.google.com/file/d/YOUR_FILE_ID/view)
+- [프로젝트 ppt 보기](https://drive.google.com/file/d/1GfLSeMQN1WoWRZQ07YIAPs-TV5WID_yk/view?usp=sharing)
 
 ## 📝 프로젝트 개요
 
